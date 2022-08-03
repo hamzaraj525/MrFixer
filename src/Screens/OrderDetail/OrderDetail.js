@@ -1,42 +1,20 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {
-  StatusBar,
   View,
   Text,
-  Pressable,
   TouchableOpacity,
-  PermissionsAndroid,
-  Image,
   Dimensions,
-  Animated,
-  SafeAreaView,
   StyleSheet,
 } from 'react-native';
-
-import NetworkModal from '../../Components/Modal/NetworkModal';
-import NetInfo from '@react-native-community/netinfo';
 import {useDispatch, useSelector} from 'react-redux';
-import Entypo from 'react-native-vector-icons/Entypo';
-import MapViewDirections from 'react-native-maps-directions';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
-import Geolocation from '@react-native-community/geolocation';
-import Geocoder from 'react-native-geocoding';
 import database from '@react-native-firebase/database';
 import {confirmOrder, addLontitude} from '../../Redux/Action/actions';
+import LottieView from 'lottie-react-native';
+import Images from '../../Constraints/Images';
+import RateModal from '../../Components/Modal/RateModal';
 
-function OrderDetail({navigation, route}) {
-  const {dLat, dLong, Item} = route.params;
-  const GOOGLE_MAPS_APIKEY = 'AIzaSyDAhaR1U_-EQJZu4Ckm0iUQ4gxSWqIMOvY';
-  const [lat, setLat] = useState();
-  const [long, setLong] = useState();
-  const [locationText, setLocationText] = useState('');
-  const [orderLocationTxt, setOrderLocationText] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [networkModal, setNetworkModal] = useState(false);
-
-  const origin = {latitude: lat, longitude: long};
-  const destination = {latitude: dLat, longitude: dLong};
-
+const OrderDetail = props => {
+  const [showRateModal, setShowRateModal] = useState(false);
   const dispatch = useDispatch();
   const {userId, userName, userMail, userContact, Status} = useSelector(
     reducers => reducers.cartReducer,
@@ -45,194 +23,71 @@ function OrderDetail({navigation, route}) {
   const updateStatusStarted = Item => {
     dispatch(confirmOrder('Work Started'));
     database()
-      .ref('cartItems/' + Item.key)
+      .ref('cartItems/' + Item)
       .update({
         Status: 'Work Started',
       })
       .then(() => console.log('Status Work stated.'));
   };
+
   const updateStatusWorkEnd = Item => {
     dispatch(confirmOrder('Work End'));
     database()
-      .ref('cartItems/' + Item.key)
+      .ref('cartItems/' + Item)
       .update({
         Status: 'Work End',
       })
       .then(() => console.log('Status work end.'));
   };
+
   const updateStatusWorkDone = Item => {
     dispatch(confirmOrder('Completed'));
     database()
-      .ref('cartItems/' + Item.key)
+      .ref('cartItems/' + Item)
       .update({
         Status: 'Completed',
       })
       .then(() => console.log('Status work Completed.'));
   };
-
-  const requestLocationPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Location Permission',
-          message: 'Mr.Fix needs access to your location',
-        },
-      );
-
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        _getCurrentLocation();
-        console.log('Location permission granted');
-      } else {
-        console.log('Location permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  const _getCurrentLocation = () => {
-    Geolocation.getCurrentPosition(
-      position => {
-        setLat(position.coords.latitude);
-        setLong(position.coords.longitude);
-        console.log('location--' + lat, long);
-      },
-      error => {
-        console.log(error);
-      },
-      {
-        enableHighAccuracy: false,
-        timeout: 2000,
-        maximumAge: 3600000,
-      },
-    );
-
-    Geocoder.init(GOOGLE_MAPS_APIKEY, {language: 'en'});
-    Geocoder.from(lat, long)
-      .then(json => {
-        var addressComponent = json.results[0].formatted_address;
-        console.log('address is  here', addressComponent);
-        setLocationText(addressComponent);
-      })
-      .catch(error => console.log(error));
-
-    Geocoder.from(dLat, dLong)
-      .then(json => {
-        var addressComponent = json.results[0].formatted_address;
-        console.log('address is  here', addressComponent);
-        setOrderLocationText(addressComponent);
-      })
-      .catch(error => console.log(error));
-  };
-
-  useEffect(() => {
-    if (Platform.OS === 'android') {
-      requestLocationPermission();
-    } else {
-      _getCurrentLocation();
-    }
-  }, [lat, long]);
-
-  const hideModalNetwork = () => {
-    setNetworkModal(false);
-  };
-
-  const animateModal = () => {
-    Animated.timing(scaleValue, {
-      toValue: {x: 0, y: 0},
-      duration: 4210,
-      useNativeDriver: true,
-    }).start();
+  const hideRateModal = () => {
+    setShowRateModal(false);
   };
 
   return (
-    <SafeAreaView style={[styles.container, {}]}>
-      {console.log(lat, long)}
-      <StatusBar
-        barStyle={'dark-content'}
-        hidden={true}
-        backgroundColor="#0E0A30"
-      />
+    <View style={[styles.container]}>
       <View
         style={{
-          width: Dimensions.get('window').width,
-          justifyContent: 'space-between',
           alignItems: 'center',
+          justifyContent: 'center',
         }}>
-        <View style={{alignItems: 'center'}}>
-          <Text
-            style={{
-              fontFamily: 'RobotoSlab-Bold',
-              fontSize: 30,
-              color: 'black',
-              marginTop: 7,
-            }}>
-            Details
-          </Text>
-          {lat || long ? (
-            <View
-              style={{
-                height: 380,
-                width: Dimensions.get('window').width - 50,
-                borderRadius: 10,
-                overflow: 'hidden',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <MapView
-                showsUserLocation={true}
-                provider={PROVIDER_GOOGLE}
-                style={styles.map}
-                region={{
-                  latitude: origin.latitude,
-                  longitude: origin.longitude,
-                  latitudeDelta: 0.015,
-                  longitudeDelta: 0.0121,
-                }}>
-                <MapView.Marker
-                  pinColor={'orange'}
-                  coordinate={{
-                    latitude: origin.latitude,
-                    longitude: origin.longitude,
-                  }}
-                  title="Your Current Location"
-                  description={locationText}
-                />
-                <MapView.Marker
-                  coordinate={{
-                    latitude: destination.latitude,
-                    longitude: destination.longitude,
-                  }}
-                  title="Order Location"
-                  description={orderLocationTxt}
-                />
-                <MapViewDirections
-                  origin={origin}
-                  destination={destination}
-                  apikey={GOOGLE_MAPS_APIKEY}
-                  strokeWidth={6}
-                  strokeColor="red"
-                />
-              </MapView>
-            </View>
-          ) : (
-            <Text>Loading...</Text>
-          )}
-        </View>
+        <LottieView
+          style={{
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height / 3,
+          }}
+          source={
+            props.Status === 'Confirmed'
+              ? Images.workConfirmLottie
+              : props.Status === 'Work Started'
+              ? Images.workStartLottie
+              : Images.workCompltdLottie
+          }
+          autoPlay
+          loop={true}
+        />
       </View>
 
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => {
-          if (Status === 'Confirmed') {
-            updateStatusStarted(Item);
-          } else if (Status === 'Work Started') {
-            updateStatusWorkEnd(Item);
-          } else if (Status === 'Work End') {
-            updateStatusWorkDone(Item);
-          } else if (Status === 'Completed') {
-            navigation.navigate('Home');
+          if (props.Status === 'Confirmed') {
+            updateStatusStarted(props.Item);
+          } else if (props.Status === 'Work Started') {
+            updateStatusWorkEnd(props.Item);
+          } else if (props.Status === 'Work End') {
+            updateStatusWorkDone(props.Item);
+            setShowRateModal(true);
+          } else {
           }
         }}
         style={styles.loginBtn}>
@@ -242,18 +97,26 @@ function OrderDetail({navigation, route}) {
             fontWeight: 'bold',
             color: 'white',
           }}>
-          {Status === 'Confirmed'
+          {props.Status === 'Confirmed'
             ? 'Start Work'
-            : Status === 'Work Started'
+            : props.Status === 'Work Started'
             ? 'End Work'
-            : Status === 'Work End'
-            ? 'Completed'
+            : props.Status === 'Work End'
+            ? 'Done'
             : 'Done'}
         </Text>
       </TouchableOpacity>
-    </SafeAreaView>
+      <RateModal
+        showRateModal={showRateModal}
+        hideRateModal={hideRateModal}
+        hideMap={props.hideMap}
+        doHideMap={props.doHideMap}
+        userNameTxt={props.userNameTxt}
+        order={props.order}
+      />
+    </View>
   );
-}
+};
 export default OrderDetail;
 const styles = StyleSheet.create({
   container: {
@@ -261,6 +124,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: 'white',
     alignItems: 'center',
+    justifyContent: 'center',
   },
 
   image: {

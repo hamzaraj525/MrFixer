@@ -78,7 +78,7 @@ function Verify({navigation, props, route}) {
 
         uploadUserToDataBase(results);
         console.log(results);
-        navigation.replace('Location');
+        navigation.replace('Home');
       } else {
         alert('Please enter valid OTP code.');
       }

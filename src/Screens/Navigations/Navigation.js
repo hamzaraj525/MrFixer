@@ -3,16 +3,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {LogBox, SafeAreaView, View, Image, StyleSheet} from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import SplashScreen from '../Splash/SplashScreen';
 import Otp from '../Authentication/Otp/Otp';
 import SignUpOtpp from '../SignUpOtp/SignUpOtpp';
 import Verify from '../Authentication/Otp/Verify';
-import Location from '../Location/Location';
 import HomeScreen from '../Home/HomeScreen';
 import OrderDetail from '../OrderDetail/OrderDetail';
-import ProfileScreen from '../Profile/ProfileScreen';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import ProfileEditt from '../ProfileEdit/ProfileEditt';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -63,22 +60,17 @@ function Navigation({}) {
         name="Home"
         component={HomeScreen}
       />
-
       <Stack.Screen
         options={{header: () => null}}
-        name="Location"
-        component={Location}
+        name="Profile"
+        component={ProfileEditt}
       />
+
       <Stack.Screen
         options={{header: () => null}}
         name="OrderDetail"
         component={OrderDetail}
       />
-      {/* <Stack.Screen
-        options={{header: () => null}}
-        name="ProfileScreen"
-        component={ProfileScreen}
-      /> */}
     </Stack.Navigator>
   );
 }
