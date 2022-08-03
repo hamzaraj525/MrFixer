@@ -38,7 +38,7 @@ const RateModal = props => {
   return (
     <>
       <Modal
-        animationType="fade"
+        animationType="slide"
         transparent={true}
         visible={props.showRateModal}>
         <SafeAreaView style={styles.container}>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     flex: 3,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
+    width: '90%',
   },
   passwordContainer: {
     marginTop: '10%',
@@ -109,12 +109,12 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     marginTop: '5%',
-    paddingHorizontal: 60,
-    paddingVertical: 13,
     backgroundColor: 'red',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    borderRadius: 1,
+    borderRadius: 44,
+    width: '70%',
+    height: 48,
   },
 
   containerr: {
@@ -125,13 +125,26 @@ const styles = StyleSheet.create({
   },
 
   okBtnTxt: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
     color: 'white',
   },
   clientName: {
     color: 'black',
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '500',
+  },
+  containerr: {
+    width: '100%',
+    backgroundColor: 'white',
+    borderTopLeftRadius: 45,
+    borderTopRightRadius: 45,
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    flexDirection: 'column',
+    position: 'absolute',
+    bottom: 0,
+    height: 300,
+    paddingVertical: '6%',
   },
 });

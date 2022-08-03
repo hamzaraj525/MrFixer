@@ -38,6 +38,7 @@ function ProfileEditt({navigation, props, route}) {
 
   const uploadImage = async () => {
     if (image == null) {
+      alert('Please select an image');
       return null;
     }
     const uploadUri = image;
@@ -76,19 +77,21 @@ function ProfileEditt({navigation, props, route}) {
     }
   };
 
-  const choosePhotoFromLibrary = () => {
+  const choosePhotoFromLibrary = async () => {
     ImagePicker.openPicker({
       width: 300,
       height: 300,
       cropping: true,
       compressImageQuality: 0.7,
     })
-      .then(image => {
-        console.log('image is here-----' + image.sourceURL);
-        const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      .then(img => {
+        console.log(
+          'image is here-----' + Platform.OS === 'ios'
+            ? img.sourceURL
+            : img.path,
+        );
+        const imageUri = Platform.OS === 'ios' ? img.sourceURL : img.path;
         setImage(imageUri);
-      })
-      .finally(() => {
         uploadImage();
       })
       .catch(error => {

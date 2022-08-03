@@ -1,7 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {
   TouchableOpacity,
-  ActivityIndicator,
   Easing,
   FlatList,
   PermissionsAndroid,
@@ -9,23 +8,23 @@ import {
   Pressable,
   Animated,
   View,
-  Linking,
 } from 'react-native';
 import style from './style';
 import Sound from 'react-native-sound';
 import * as Animatable from 'react-native-animatable';
 import {useDispatch, useSelector} from 'react-redux';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import database from '@react-native-firebase/database';
 import Geolocation from '@react-native-community/geolocation';
 import Geocoder from 'react-native-geocoding';
-import MapViewDirections from 'react-native-maps-directions';
 import {confirmOrder} from './../../Redux/Action/actions';
 import {getPreciseDistance} from 'geolib';
 import FastImage from 'react-native-fast-image';
 import Images from '../../Constraints/Images';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import OrderDetail from '../OrderDetail/OrderDetail';
+import Maps from '../../Components/Maps';
+import GoBtn from '../../Components/GoBtn';
+import GoingOrder from '../../Components/GoingOrder';
+import TopLocBar from '../../Components/TopLocBar';
 
 const HomeScreen = ({navigation}) => {
   const [lat, setLat] = useState();
@@ -239,37 +238,15 @@ const HomeScreen = ({navigation}) => {
     const distance = pdis / 1000;
     if (distance < 10) {
       return (
-        <View
-          style={{
-            paddingVertical: 30,
-            paddingHorizontal: 10,
-            alignItems: 'center',
-            justifyContent: 'center',
-            alignSelf: 'center',
-            width: '90%',
-            backgroundColor: 'white',
-            borderRadius: 7,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '2%',
-              width: '100%',
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-evenly',
-              }}>
+        <View style={style.orderCard}>
+          <View style={style.orderSubCard}>
+            <View style={style.orderCardText}>
               <FastImage
+                resizeMode={FastImage.resizeMode.contain}
                 source={require('./../../../assets/Images/profile.png')}
                 style={{
                   width: 45,
                   height: 45,
-                  resizeMode: 'contain',
                 }}
                 priority={FastImage.priority.normal}
               />
@@ -293,25 +270,10 @@ const HomeScreen = ({navigation}) => {
               <Text style={style.kmTxt}>{distance.toFixed(1)} Km</Text>
             </View>
           </View>
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'column',
-              alignItems: 'center',
-
-              justifyContent: 'space-between',
-            }}>
+          <View style={style.acceBtnContaner}>
             <TouchableOpacity
               activeOpacity={0.9}
-              style={{
-                borderRadius: 25,
-                backgroundColor: '#FB5B64',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 42,
-                marginTop: 8,
-                width: '90%',
-              }}
+              style={style.acceptBtn}
               onPress={() => {
                 setOrder(!order);
                 setTimeout(() => {
@@ -375,47 +337,13 @@ const HomeScreen = ({navigation}) => {
         />
       ) : (
         <>
-          <MapView
-            provider={PROVIDER_GOOGLE}
-            style={style.map}
-            region={{
-              latitude: lat ? lat : 0,
-              longitude: long ? long : 0,
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0121,
-            }}>
-            <MapView.Marker
-              coordinate={{
-                latitude: lat ? lat : 0,
-                longitude: long ? long : 0,
-              }}
-              title="Your Current Location"
-            />
-
-            <MapView.Marker
-              pinColor={'orange'}
-              coordinate={{
-                latitude: userLat ? userLat : 0,
-                longitude: userLong ? userLong : 0,
-              }}
-              title="Order Location"
-            />
-            {showGngOdr ? (
-              <MapViewDirections
-                origin={{
-                  latitude: lat ? lat : 0,
-                  longitude: long ? long : 0,
-                }}
-                destination={{
-                  latitude: userLat ? userLat : 0,
-                  longitude: userLong ? userLong : 0,
-                }}
-                apikey={GOOGLE_MAPS_APIKEY}
-                strokeWidth={6}
-                strokeColor="red"
-              />
-            ) : null}
-          </MapView>
+          <Maps
+            lat={lat}
+            long={long}
+            userLat={userLat}
+            userLong={userLong}
+            showGngOdr={showGngOdr}
+          />
 
           {!toggle ? (
             <Pressable
@@ -431,23 +359,11 @@ const HomeScreen = ({navigation}) => {
           ) : null}
 
           {!toggle ? (
-            <Animated.View
-              style={[
-                style.onlineBtn,
-                {transform: [{translateY: verticalVal}]},
-              ]}>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => {
-                  goOnline();
-                }}>
-                {loader ? (
-                  <ActivityIndicator size="large" color="white" />
-                ) : (
-                  <Text style={style.goBtnTxt}>GO</Text>
-                )}
-              </TouchableOpacity>
-            </Animated.View>
+            <GoBtn
+              loader={loader}
+              goOnline={goOnline}
+              verticalVal={verticalVal}
+            />
           ) : null}
 
           {!toggle ? (
@@ -484,96 +400,18 @@ const HomeScreen = ({navigation}) => {
           ) : null}
 
           {showGngOdr === true ? (
-            <Animatable.View
-              delay={800}
-              animation="slideInUp"
-              style={[
-                style.botomContainerTwo,
-                {
-                  backgroundColor: color ? '#82168D' : 'white',
-                  justifyContent: 'center',
-                },
-              ]}>
-              <View
-                style={{
-                  width: '90%',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexDirection: 'row',
-                }}>
-                <Animatable.View
-                  animation="slideInUp"
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: '#ecf5fb',
-                    borderRadius: 46 / 2,
-                    width: 46,
-                    height: 46,
-                  }}>
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    onPress={() => {
-                      // Linking.openURL(
-                      //   'https://www.google.com/maps/dir/?api=1&destination=' +
-                      //     userLat +
-                      //     ',' +
-                      //     userLong +
-                      //     '&travelmode=driving',
-                      // );
-                      Linking.openURL(`tel:${userPhone}`);
-                    }}>
-                    <MaterialIcons name="call" size={25} color="black" />
-                  </TouchableOpacity>
-                </Animatable.View>
-
-                <Animatable.Text
-                  animation="slideInUp"
-                  style={[style.txtItems, {color: 'black', fontSize: 16}]}>
-                  Going For Order
-                </Animatable.Text>
-                <Animatable.View
-                  style={[
-                    style.arrivBtn,
-                    {
-                      paddingVertical: loader ? '3.3%' : '2.7%',
-                      paddingHorizontal: loader ? '10.7%' : '5%',
-                    },
-                  ]}
-                  animation="slideInUp">
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    onPress={() => {
-                      hideMapScreen();
-                    }}>
-                    {loader === false ? (
-                      <Text style={[style.txtItems, {color: 'white'}]}>
-                        Arrived
-                      </Text>
-                    ) : (
-                      <ActivityIndicator size={'small'} color={'white'} />
-                    )}
-                  </TouchableOpacity>
-                </Animatable.View>
-              </View>
-            </Animatable.View>
+            <GoingOrder
+              loader={loader}
+              doHideMap={doHideMap}
+              userPhone={userPhone}
+              color={color}
+              hideMapScreen={hideMapScreen}
+            />
           ) : null}
 
           {order ? showOrders() : null}
 
-          {showGngOdr ? (
-            <View style={[style.topViewContain, {}]}>
-              <FastImage
-                resizeMode="contain"
-                style={[style.locImg]}
-                source={Images.locationImg}
-              />
-              <Text numberOfLines={3} style={[style.locTxtStyle, {}]}>
-                {userLocTxt}
-              </Text>
-            </View>
-          ) : null}
+          {showGngOdr ? <TopLocBar userLocTxt={userLocTxt} /> : null}
         </>
       )}
     </View>

@@ -1,5 +1,5 @@
 export default Images = {
-  profileImgHome: require('./../../assets/Images/h.jpeg'),
+  profileImgHome: require('./../../assets/Images/man-2.png'),
   locationImg: require('./../../assets/Images/googleMap.png'),
   workConfirmLottie: require('./../../assets/Animations/confirm.json'),
   workStartLottie: require('./../../assets/Animations/workStrt.json'),

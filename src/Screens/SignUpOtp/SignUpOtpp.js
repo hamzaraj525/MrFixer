@@ -7,12 +7,9 @@ import {
   Pressable,
   SafeAreaView,
 } from 'react-native';
-
 import style from './style';
-import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import auth from '@react-native-firebase/auth';
-import {connect, useDispatch, useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {addUserid, logoutUser} from '../../Redux/Action/actions';
 
 function SignUpOtpp({navigation, props, route}) {
@@ -22,16 +19,7 @@ function SignUpOtpp({navigation, props, route}) {
   const [email, setEmail] = useState('');
   const {confirmation, code} = route.params;
   const dispatch = useDispatch();
-  const {
-    cartItems,
-    userId,
-    userName,
-    userMail,
-    userContact,
-    userlocation,
-    lat,
-    long,
-  } = useSelector(reducers => reducers.cartReducer);
+  const {cartItems, userId} = useSelector(reducers => reducers.cartReducer);
 
   const done = () => {
     if (Name.length > 0 && email.length > 0) {
@@ -146,13 +134,6 @@ function SignUpOtpp({navigation, props, route}) {
           }}
           style={style.loginBtn}>
           <Text style={style.sinupBtn}>Done</Text>
-
-          {/* <Ionicons
-            style={{marginLeft: '3%'}}
-            name={'arrow-forward'}
-            size={25}
-            color={'white'}
-          /> */}
         </Pressable>
       </ScrollView>
     </SafeAreaView>
