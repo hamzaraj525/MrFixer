@@ -17,6 +17,7 @@ const GoBtn = props => {
           {transform: [{translateY: props.verticalVal}]},
         ]}>
         <TouchableOpacity
+          disabled={props.loader ? true : false}
           activeOpacity={0.8}
           onPress={() => {
             props.goOnline();

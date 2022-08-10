@@ -5,15 +5,56 @@ import {
   Linking,
   Animated,
   StyleSheet,
+  Dimensions,
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const GoingOrder = props => {
   return (
     <>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: Dimensions.get('window').height / 7.8,
+          right: 20,
+        }}>
+        <TouchableOpacity
+          style={{
+            elevation: 2,
+            padding: 11,
+            borderRadius: 30,
+            backgroundColor: '#82168D',
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+            width: 144,
+          }}
+          activeOpacity={0.8}
+          onPress={() => {
+            Linking.openURL(
+              'https://www.google.com/maps/dir/?api=1&destination=' +
+                props.userLat +
+                ',' +
+                props.userLong +
+                '&travelmode=driving',
+            );
+          }}>
+          <MaterialCommunityIcons name="navigation" size={28} color="white" />
+          <Text
+            style={{
+              color: 'white',
+              fontSize: 18,
+              fontWeight: '400',
+            }}>
+            NAVIGATE
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <Animatable.View
         delay={800}
         animation="slideInUp"
@@ -45,13 +86,6 @@ const GoingOrder = props => {
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
-                // Linking.openURL(
-                //   'https://www.google.com/maps/dir/?api=1&destination=' +
-                //     userLat +
-                //     ',' +
-                //     userLong +
-                //     '&travelmode=driving',
-                // );
                 Linking.openURL(`tel:${props.userPhone}`);
               }}>
               <MaterialIcons name="call" size={25} color="black" />

@@ -20,13 +20,11 @@ export const emptyCart = payload => {
     payload: payload,
   };
 };
-export const addUserid = (payload, userName, userMail, userContact) => {
-  console.log(userContact);
+export const addUserid = (userId, userContact) => {
+  console.log('user Id redux' + userId);
   return {
     type: 'ADD_USER_ID',
-    payload: payload,
-    userName: userName,
-    userMail: userMail,
+    userId: userId,
     userContact: userContact,
   };
 };
@@ -44,11 +42,12 @@ export const updateUserMail = userMail => {
     userMail: userMail,
   };
 };
-export const logoutUser = payload => {
-  console.log(payload);
+export const logoutUser = (userId, userContact) => {
+  console.log('user Redux id  sign Out ' + userId);
   return {
     type: 'LOGOUT_USER',
-    payload: payload,
+    userId: userId,
+    userContact: userContact,
   };
 };
 export const addUserLcation = userlocation => {
@@ -73,9 +72,9 @@ export const addLontitude = long => {
   };
 };
 export const confirmOrder = Status => {
-  console.log('Confirm_Order----' + Status);
+  console.log('lat----' + Status);
   return {
-    type: 'STATUS_CONFIRM_ORDER',
+    type: 'USER_STATUS',
     Status: Status,
   };
 };

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useEffect, useCallback, useMemo, useRef} from 'react';
 import {
   TouchableOpacity,
   Easing,
@@ -25,11 +25,14 @@ import Maps from '../../Components/Maps';
 import GoBtn from '../../Components/GoBtn';
 import GoingOrder from '../../Components/GoingOrder';
 import TopLocBar from '../../Components/TopLocBar';
+import BottomSheet from '@gorhom/bottom-sheet';
 
 const HomeScreen = ({navigation}) => {
   const [lat, setLat] = useState();
   const [order, setOrder] = useState(false);
   const [orderKey, setOrderKey] = useState();
+  const [distance, setDistance] = useState('');
+  const [duration, setDuration] = useState('');
   const [statusUser, setStatus] = useState('');
   const [userPhone, setUsrPhone] = useState();
   const [long, setLong] = useState();
@@ -156,7 +159,7 @@ const HomeScreen = ({navigation}) => {
     Geocoder.init(GOOGLE_MAPS_APIKEY, {language: 'en'});
     Geocoder.from(lat, long)
       .then(json => {
-        var addressComponent = json.results[0].formatted_address;
+        var addressComponent = json.results[3].formatted_address;
         console.log('address is  here', addressComponent);
         setLocationText(addressComponent);
       })
@@ -194,20 +197,20 @@ const HomeScreen = ({navigation}) => {
           easing: Easing.inOut(Easing.quad),
         }).start();
       }
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(slideAnimation, {
-            toValue: 255,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(slideAnimation, {
-            toValue: 0,
-            duration: 2000,
-            useNativeDriver: true,
-          }),
-        ]),
-      ).start();
+      // Animated.loop(
+      //   Animated.sequence([
+      //     Animated.timing(slideAnimation, {
+      //       toValue: 255,
+      //       duration: 2000,
+      //       useNativeDriver: true,
+      //     }),
+      //     Animated.timing(slideAnimation, {
+      //       toValue: 0,
+      //       duration: 2000,
+      //       useNativeDriver: true,
+      //     }),
+      //   ]),
+      // ).start();
     });
   }, [lat, long, toggle]);
 
@@ -230,15 +233,40 @@ const HomeScreen = ({navigation}) => {
     }, 2000);
   };
 
+  const getTimeandDuration = item => {
+    fetch(
+      'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' +
+        lat +
+        ',' +
+        long +
+        '&destinations=' +
+        item.latitude +
+        ',' +
+        item.longitude +
+        '&key=' +
+        GOOGLE_MAPS_APIKEY,
+    )
+      .then(response => response.json())
+      .then(json => {
+        console.log('json---', json);
+        setDistance(json.rows[0].elements[0].distance.text);
+        setDuration(json.rows[0].elements[0].duration.text);
+      });
+  };
+
   const renderOrders = ({item, index}) => {
+    getTimeandDuration(item, index);
+
     var pdis = getPreciseDistance(
       {latitude: item.latitude, longitude: item.longitude},
       {latitude: lat, longitude: long},
     );
-    const distance = pdis / 1000;
-    if (distance < 10) {
+
+    const distancee = pdis / 1000;
+    if (duration !== '' && distancee < 10) {
       return (
         <View style={style.orderCard}>
+          <Text style={style.duractionTxt}>{duration} </Text>
           <View style={style.orderSubCard}>
             <View style={style.orderCardText}>
               <FastImage
@@ -261,13 +289,14 @@ const HomeScreen = ({navigation}) => {
                 <Text style={style.kmTxt}>{item.userName}</Text>
               </View>
             </View>
+
             <View
               style={{
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
               <Text style={style.priceTxt}>Rs {item.TotalPrice}</Text>
-              <Text style={style.kmTxt}>{distance.toFixed(1)} Km</Text>
+              <Text style={style.priceTxt}>{distancee.toFixed(1)} km</Text>
             </View>
           </View>
           <View style={style.acceBtnContaner}>
@@ -281,7 +310,9 @@ const HomeScreen = ({navigation}) => {
                 }, 1000);
                 updateStatus(item);
               }}>
-              <Text style={{fontSize: 15, color: 'white'}}>Accept</Text>
+              <Text style={{fontSize: 15, color: 'white', fontWeight: '500'}}>
+                Accept
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -291,19 +322,11 @@ const HomeScreen = ({navigation}) => {
 
   const showOrders = () => {
     return (
-      <Animatable.View
-        delay={800}
-        animation="slideInUp"
-        style={{
-          position: 'absolute',
-          bottom: 20,
-        }}>
-        <FlatList
-          data={list}
-          renderItem={renderOrders}
-          keyExtractor={item => item.key}
-        />
-      </Animatable.View>
+      <FlatList
+        data={list}
+        renderItem={renderOrders}
+        keyExtractor={item => item.key}
+      />
     );
   };
 
@@ -343,6 +366,7 @@ const HomeScreen = ({navigation}) => {
             userLat={userLat}
             userLong={userLong}
             showGngOdr={showGngOdr}
+            locationText={locationText}
           />
 
           {!toggle ? (
@@ -406,10 +430,22 @@ const HomeScreen = ({navigation}) => {
               userPhone={userPhone}
               color={color}
               hideMapScreen={hideMapScreen}
+              userLat={userLat}
+              userLong={userLong}
+              showGngOdr={showGngOdr}
             />
           ) : null}
 
-          {order ? showOrders() : null}
+          {order ? (
+            <View
+              animation="slideInUp"
+              style={{
+                position: 'absolute',
+                bottom: 20,
+              }}>
+              {showOrders()}
+            </View>
+          ) : null}
 
           {showGngOdr ? <TopLocBar userLocTxt={userLocTxt} /> : null}
         </>

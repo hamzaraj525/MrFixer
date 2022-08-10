@@ -16,9 +16,7 @@ import {updateUserMail} from '../../Redux/Action/actions';
 const MailEditModal = props => {
   const [mail, setMail] = useState('');
   const dispatch = useDispatch();
-  const {cartItems, userId, userMail} = useSelector(
-    reducers => reducers.cartReducer,
-  );
+
   const scaleValue = useRef(new Animated.Value(0)).current;
 
   const animateModal = () => {
@@ -30,15 +28,18 @@ const MailEditModal = props => {
   };
 
   const updaterMail = () => {
-    if (userMail.length > 0) {
+    if (mail.length > 0) {
       props.hideMailModal();
-      dispatch(updateUserMail(userMail));
+
       database()
         .ref('riders/' + props.mailEdit)
         .update({
-          userMail: userMail,
+          userMail: mail,
         })
-        .then(() => console.log('mail updated.'));
+        .then(() => {
+          dispatch(updateUserMail(mail));
+          console.log('mail updated.');
+        });
       animateModal();
     } else {
       alert('Please Enter Mail');
@@ -59,10 +60,8 @@ const MailEditModal = props => {
               <TextInput
                 autoFocus={true}
                 style={styles.TiName}
-                value={userMail}
-                onChangeText={text => {
-                  dispatch(updateUserMail(text));
-                }}
+                value={mail}
+                onChangeText={text => setMail(text)}
                 placeholder="Enter your Email"
                 placeholderTextColor={'grey'}
               />

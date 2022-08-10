@@ -11,14 +11,14 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import database from '@react-native-firebase/database';
-import Constraints from './../../Constraints/Constraints';
+import Constraints from '../../Constraints/Constraints';
 import {updateUserName} from '../../Redux/Action/actions';
 
 const NameEditModal = props => {
   const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [list, setList] = useState([]);
-  const {userName} = useSelector(reducers => reducers.cartReducer);
+
   const scaleValue = useRef(new Animated.Value(0)).current;
 
   const animateModal = () => {
@@ -30,22 +30,23 @@ const NameEditModal = props => {
   };
 
   const updateName = () => {
-    if (userName.length > 0) {
+    if (name.length > 0) {
       props.hideNameModal();
-      dispatch(updateUserName(userName));
       animateModal();
 
       database()
         .ref('riders/' + props.nameEdit)
         .update({
-          userName: userName,
+          userName: name,
         })
-        .then(() => console.log('name updated.'));
+        .then(() => {
+          dispatch(updateUserName(name));
+          console.log('name updated.');
+        });
     } else {
       alert('Please Enter Name');
     }
   };
-
   console.log(props.nameEdit);
   console.log(props.idEdit);
   return (
@@ -63,10 +64,8 @@ const NameEditModal = props => {
               <TextInput
                 autoFocus={true}
                 style={styles.TiName}
-                value={userName}
-                onChangeText={text => {
-                  dispatch(updateUserName(text));
-                }}
+                value={name}
+                onChangeText={text => setName(text)}
                 placeholder="Enter your name"
                 placeholderTextColor={'grey'}
               />

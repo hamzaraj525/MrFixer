@@ -1,9 +1,10 @@
-import React, {useRef, useState} from 'react';
+import React from 'react';
 import {StyleSheet} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 
 const Maps = props => {
+  const GOOGLE_MAPS_APIKEY = 'AIzaSyDAhaR1U_-EQJZu4Ckm0iUQ4gxSWqIMOvY';
   return (
     <>
       <MapView
@@ -20,7 +21,9 @@ const Maps = props => {
             latitude: props.lat ? props.lat : 0,
             longitude: props.long ? props.long : 0,
           }}
-          title="Your Current Location"
+          title={
+            props.locationText ? props.locationText : 'Fetching Location...'
+          }
         />
 
         <MapView.Marker

@@ -229,4 +229,34 @@ export default StyleSheet.create({
   },
 
   logintXT: {fontSize: 17, fontFamily: 'RobotoSlab-Bold', color: '#DA2328'},
+  loader: {
+    fontFamily: 'RobotoSlab-Bold',
+    fontSize: 16,
+    color: '#0000ff',
+    marginTop: 10,
+  },
+
+  subView: {
+    flex: 1.4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'gold',
+  },
+  imgContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 95 / 2,
+    width: 95,
+    height: 95,
+    backgroundColor: '#EAC36D',
+    marginBottom: '3%',
+  },
+  icon: {width: 50, tintColor: 'black', height: 50},
+  subViewTwo: {
+    flex: 2,
+    borderTopStartRadius: 70,
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  otpStyle: {width: '85%', marginTop: '20%', height: 51},
 });

@@ -23,6 +23,11 @@ export default StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
   },
+  duractionTxt: {
+    color: '#DA2328',
+    fontSize: 32,
+    fontWeight: '500',
+  },
   profileImg: {
     position: 'absolute',
     top: 10,
@@ -151,5 +156,14 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     padding: '2%',
     width: '100%',
+  },
+  contaainer: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: 'grey',
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
   },
 });

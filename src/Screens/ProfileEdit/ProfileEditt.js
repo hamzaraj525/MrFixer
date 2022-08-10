@@ -21,6 +21,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import NameEditModal from './../../Components/Modal/NameEditModal';
 import MailEditModal from './../../Components/Modal/MailEditModal';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Share from 'react-native-share';
+import auth from '@react-native-firebase/auth';
+import files from './../../../assets/Images/fileBase64';
+import {logoutUser} from './../../Redux/Action/actions';
 
 function ProfileEditt({navigation, props, route}) {
   const dispatch = useDispatch();
@@ -34,7 +39,7 @@ function ProfileEditt({navigation, props, route}) {
   const [transferred, setTransferred] = useState(0);
   const [showNameModal, setNameModal] = React.useState(false);
   const [showMailModal, setMailModal] = React.useState(false);
-  const {userId} = useSelector(reducers => reducers.cartReducer);
+  const {userId, userContact} = useSelector(reducers => reducers.cartReducer);
 
   const uploadImage = async () => {
     if (image == null) {
@@ -185,6 +190,49 @@ function ProfileEditt({navigation, props, route}) {
       }
     });
   };
+  const showAlert = () =>
+    Alert.alert('Confirmation', 'Are you sure you want to sign out ?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          try {
+            auth()
+              .signOut()
+              .then(() => {
+                dispatch(logoutUser(userId, userContact));
+              })
+              .then(() => {
+                console.log('User signed out!');
+                navigation.replace('OtpStack');
+              })
+              .catch(error => {
+                alert(error);
+              });
+          } catch (error) {
+            alert(error);
+          }
+        },
+      },
+    ]);
+
+  const shareApp = async () => {
+    const options = {
+      message: 'Mr.Fix App',
+      url: files.appLogo,
+    };
+    try {
+      const shareRes = await Share.open(options).then(res => {
+        console.log(res);
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <SafeAreaView style={style.container}>
@@ -207,7 +255,14 @@ function ProfileEditt({navigation, props, route}) {
           <Text style={style.ediTxt}>{Constraints.EDIT}</Text>
           <Text style={style.prfileTxt}>{Constraints.PROFILE} 😃</Text>
           <View style={style.imgContainer}>
-            <Pressable style={style.emtyContainer}></Pressable>
+            <Pressable
+              style={style.shareBtn}
+              onPress={() => {
+                shareApp();
+              }}>
+              <FontAwesome5 name={'share-alt'} size={25} color={'black'} />
+            </Pressable>
+
             <Pressable
               style={style.imgSubContainer}
               onPress={() => {
@@ -229,7 +284,13 @@ function ProfileEditt({navigation, props, route}) {
                 />
               )}
             </Pressable>
-            <Pressable style={style.usrnmeContainer}></Pressable>
+            <Pressable
+              style={style.logoutBtn}
+              onPress={() => {
+                showAlert();
+              }}>
+              <Ionicons name={'log-out'} size={30} color={'black'} />
+            </Pressable>
           </View>
 
           <Text style={style.userNmeStyle}>{userNme}</Text>

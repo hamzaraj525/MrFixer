@@ -58,9 +58,6 @@ export default StyleSheet.create({
   scrolViewStyle: {
     width: '90%',
     padding: '2%',
-    borderRadius: 33,
-    borderWidth: 0.2,
-    borderColor: 'black',
   },
   ediTxt: {
     fontFamily: 'RobotoSlab-Bold',
@@ -104,4 +101,22 @@ export default StyleSheet.create({
     borderColor: 'grey',
   },
   backArrow: {marginTop: '2%', marginLeft: '2%'},
+  shareBtn: {
+    alignItems: 'center',
+    height: 55,
+    width: 55,
+    borderRadius: 55 / 2,
+    justifyContent: 'center',
+    borderWidth: 0.9,
+    borderColor: 'grey',
+  },
+  logoutBtn: {
+    alignItems: 'center',
+    height: 55,
+    width: 55,
+    borderRadius: 55 / 2,
+    justifyContent: 'center',
+    borderWidth: 0.9,
+    borderColor: 'grey',
+  },
 });

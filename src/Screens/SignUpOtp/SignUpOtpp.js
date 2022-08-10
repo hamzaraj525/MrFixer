@@ -3,93 +3,86 @@ import {
   Text,
   View,
   TextInput,
-  ScrollView,
   Pressable,
+  ScrollView,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import style from './style';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
-import {addUserid, logoutUser} from '../../Redux/Action/actions';
+import Feather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Constraints from '../../Constraints/Constraints';
+import database from '@react-native-firebase/database';
+import {
+  addUserid,
+  updateUserName,
+  updateUserMail,
+} from './../../Redux/Action/actions';
 
 function SignUpOtpp({navigation, props, route}) {
-  const [phonePlace, setPhonePlace] = React.useState(false);
-  const [placeMail, setPlaceMail] = React.useState(false);
+  const dispatch = useDispatch();
   const [Name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const {confirmation, code} = route.params;
-  const dispatch = useDispatch();
-  const {cartItems, userId} = useSelector(reducers => reducers.cartReducer);
+  const [loader, setLoader] = React.useState(false);
+  const [placeMail, setPlaceMail] = React.useState(false);
+  const [phonePlace, setPhonePlace] = React.useState(false);
+  const {cartItems, userContact} = useSelector(
+    reducers => reducers.cartReducer,
+  );
+
+  const {code, userKey} = route.params;
+
+  const uploadUserToDataBase = () => {
+    setLoader(true);
+    const newReference = database()
+      .ref('riders/' + userKey)
+      .update({
+        userName: Name,
+        userMail: email,
+      });
+
+    newReference
+      .then(() => {
+        setLoader(false);
+        dispatch(updateUserName(Name));
+        dispatch(updateUserMail(email));
+        navigation.replace('Home');
+        console.log('Home screen');
+      })
+      .catch(error => {
+        Alert.alert('Something went wrong');
+      });
+  };
 
   const done = () => {
     if (Name.length > 0 && email.length > 0) {
-      navigation.navigate('Verify', {
-        confirmation: confirmation,
-        code: code,
-        name: Name,
-        Email: email,
-      });
+      uploadUserToDataBase();
     } else {
       alert('Please fill all the fields');
     }
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: 'white',
-      }}>
-      <View
-        style={{
-          marginTop: '4%',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: '5%',
-        }}>
+    <SafeAreaView style={style.container}>
+      <View style={style.header}>
         <Pressable
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          style={style.backBtn}
           onPress={() => {
             navigation.goBack();
           }}>
-          <Ionicons
-            style={{}}
-            name={'arrow-back-outline'}
-            size={30}
-            color={'black'}
-          />
+          <Ionicons name={'arrow-back-outline'} size={30} color={'black'} />
         </Pressable>
-        <Text
-          style={{
-            fontFamily: 'RobotoSlab-Bold',
-            color: 'black',
-            fontWeight: '500',
-            fontSize: 21,
-          }}>
-          Personal Details
-        </Text>
+        <Text style={style.title}>{Constraints.PERSONAL_DETAILS_TITLE}</Text>
         <Pressable
           style={{
             alignItems: 'center',
             justifyContent: 'center',
-          }}
-          onPress={() => {}}>
-          <Ionicons style={{}} name={'share'} size={30} color={'white'} />
+          }}>
+          <Ionicons name={'share'} size={30} color={'white'} />
         </Pressable>
       </View>
-      <View
-        style={{
-          alignSelf: 'center',
-          width: '40%',
-          height: 0.9,
-          marginTop: -1,
-          backgroundColor: 'black',
-        }}
-      />
+      <View style={style.bottomLine} />
       <ScrollView
         contentContainerStyle={{paddingBottom: '6%'}}
         style={{paddingHorizontal: '5%'}}>
@@ -133,7 +126,11 @@ function SignUpOtpp({navigation, props, route}) {
             done();
           }}
           style={style.loginBtn}>
-          <Text style={style.sinupBtn}>Done</Text>
+          {loader ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <Text style={style.sinupBtn}>{Constraints.DONE_BTN}</Text>
+          )}
         </Pressable>
       </ScrollView>
     </SafeAreaView>

@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
   containerr: {
     width: '100%',
     backgroundColor: 'white',
-    borderTopLeftRadius: 45,
-    borderTopRightRadius: 45,
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35,
     alignItems: 'center',
     justifyContent: 'space-evenly',
     flexDirection: 'column',
