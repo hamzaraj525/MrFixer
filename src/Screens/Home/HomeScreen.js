@@ -8,6 +8,7 @@ import {
   Pressable,
   Animated,
   View,
+  Dimensions,
 } from 'react-native';
 import style from './style';
 import Sound from 'react-native-sound';
@@ -26,6 +27,8 @@ import GoBtn from '../../Components/GoBtn';
 import GoingOrder from '../../Components/GoingOrder';
 import TopLocBar from '../../Components/TopLocBar';
 import BottomSheet from '@gorhom/bottom-sheet';
+import LottieView from 'lottie-react-native';
+const sound = new Sound('simplenotification.mp3');
 
 const HomeScreen = ({navigation}) => {
   const [lat, setLat] = useState();
@@ -42,6 +45,7 @@ const HomeScreen = ({navigation}) => {
   const [userLocTxt, setUserlocTxt] = useState('');
   const [showText, setShowTxt] = useState(true);
   const [loader, setLoader] = useState(false);
+  const [radarLoader, setRadarLoader] = useState(false);
   const [color, setColor] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [dataList, setDataList] = useState(false);
@@ -64,6 +68,7 @@ const HomeScreen = ({navigation}) => {
       .ref('cartItems/' + item.key)
       .update({
         Status: 'Confirmed',
+        OrderDone: true,
       })
       .then(() => console.log('Status Confirmed.'));
   };
@@ -76,7 +81,6 @@ const HomeScreen = ({navigation}) => {
   };
 
   const getOrders = () => {
-    const sound = new Sound('simplenotification.mp3');
     setTimeout(() => {
       database()
         .ref('/cartItems')
@@ -101,6 +105,7 @@ const HomeScreen = ({navigation}) => {
               longitude: child.val().longitude,
               userLocation: child.val().userLocation,
               Status: child.val().Status,
+              OrderDone: child.val().OrderDone,
             });
           });
           setList(li);
@@ -113,7 +118,6 @@ const HomeScreen = ({navigation}) => {
           setUsrPhone(li[0].userContact);
           setOrderKey(li[0].key);
           setUserName(li[0].userName);
-          handleSound(sound);
         });
     }, 2300);
   };
@@ -224,10 +228,13 @@ const HomeScreen = ({navigation}) => {
       setDataList(true);
 
       setTimeout(() => {
+        setRadarLoader(true);
         setTimeout(() => {
           setOrder(true);
           setDataList(false);
-        }, 1600);
+          setRadarLoader(false);
+        }, 4000);
+
         setColor(false);
       }, 1000);
     }, 2000);
@@ -263,9 +270,10 @@ const HomeScreen = ({navigation}) => {
     );
 
     const distancee = pdis / 1000;
-    if (duration !== '' && distancee < 10) {
+    if (duration !== '' && distancee < 10 && item.OrderDone === false) {
       return (
         <View style={style.orderCard}>
+          {handleSound(sound)}
           <Text style={style.duractionTxt}>{duration} </Text>
           <View style={style.orderSubCard}>
             <View style={style.orderCardText}>
@@ -450,6 +458,23 @@ const HomeScreen = ({navigation}) => {
           {showGngOdr ? <TopLocBar userLocTxt={userLocTxt} /> : null}
         </>
       )}
+      {radarLoader ? (
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <LottieView
+            style={{
+              width: Dimensions.get('window').width,
+              height: Dimensions.get('window').height,
+            }}
+            source={Images.radarLoader}
+            autoPlay
+            loop={true}
+          />
+        </View>
+      ) : null}
     </View>
   );
 };

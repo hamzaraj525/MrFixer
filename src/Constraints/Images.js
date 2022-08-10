@@ -8,4 +8,5 @@ export default Images = {
   workEndLottie: require('./../../assets/Animations/donn.json'),
   workCompltdLottie: require('./../../assets/Animations/completed.json'),
   celebrateLottie: require('./../../assets/Animations/confetti.json'),
+  radarLoader: require('./../../assets/Animations/radar-loading.json'),
 };

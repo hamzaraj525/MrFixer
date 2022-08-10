@@ -31,6 +31,7 @@ function ProfileEditt({navigation, props, route}) {
   const dispatch = useDispatch();
   const [listt, setList] = useState([]);
   const [image, setImage] = useState(null);
+  const [loader, setLoader] = useState(false);
   const [userNme, setUserNme] = useState('');
   const [idEdit, setId] = React.useState('');
   const [mailEdit, setMailEdit] = React.useState();
@@ -112,6 +113,7 @@ function ProfileEditt({navigation, props, route}) {
   };
 
   useEffect(() => {
+    setLoader(true);
     database()
       .ref('/riders')
       .on('value', snapshot => {
@@ -126,6 +128,7 @@ function ProfileEditt({navigation, props, route}) {
           });
         });
         setList(li);
+        setLoader(false);
         setUserNme(li[0].userNamee);
       });
   }, []);
@@ -294,7 +297,15 @@ function ProfileEditt({navigation, props, route}) {
           </View>
 
           <Text style={style.userNmeStyle}>{userNme}</Text>
-          {list()}
+          {loader ? (
+            <ActivityIndicator
+              style={{marginTop: 50}}
+              size="large"
+              color="#0000ff"
+            />
+          ) : (
+            list()
+          )}
         </ScrollView>
       )}
       <NameEditModal
