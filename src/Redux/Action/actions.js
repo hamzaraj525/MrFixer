@@ -78,3 +78,10 @@ export const confirmOrder = Status => {
     Status: Status,
   };
 };
+export const addTimeOfOrder = Time => {
+  console.log('lat----' + Time);
+  return {
+    type: 'ORDER_TIME',
+    Time: Time,
+  };
+};

@@ -9,11 +9,15 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
+import moment from 'moment';
 import * as Animatable from 'react-native-animatable';
+import {useDispatch, useSelector} from 'react-redux';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import {addTimeOfOrder} from '../Redux/Action/actions';
 const GoingOrder = props => {
+  const dispatch = useDispatch();
+  const time = moment().format('hh:mm a');
   return (
     <>
       <View
@@ -109,6 +113,7 @@ const GoingOrder = props => {
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
+                dispatch(addTimeOfOrder(time));
                 props.hideMapScreen();
               }}>
               {props.loader === false ? (

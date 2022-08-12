@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, useMemo, useRef} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {
   TouchableOpacity,
   Easing,
@@ -8,16 +8,18 @@ import {
   Pressable,
   Animated,
   View,
+  StyleSheet,
   Dimensions,
 } from 'react-native';
 import style from './style';
+import moment from 'moment';
 import Sound from 'react-native-sound';
 import * as Animatable from 'react-native-animatable';
 import {useDispatch, useSelector} from 'react-redux';
 import database from '@react-native-firebase/database';
 import Geolocation from '@react-native-community/geolocation';
 import Geocoder from 'react-native-geocoding';
-import {confirmOrder} from './../../Redux/Action/actions';
+import {confirmOrder, addTimeOfOrder} from './../../Redux/Action/actions';
 import {getPreciseDistance} from 'geolib';
 import FastImage from 'react-native-fast-image';
 import Images from '../../Constraints/Images';
@@ -29,6 +31,7 @@ import TopLocBar from '../../Components/TopLocBar';
 import BottomSheet from '@gorhom/bottom-sheet';
 import LottieView from 'lottie-react-native';
 const sound = new Sound('simplenotification.mp3');
+const {width, height} = Dimensions.get('window');
 
 const HomeScreen = ({navigation}) => {
   const [lat, setLat] = useState();
@@ -53,14 +56,12 @@ const HomeScreen = ({navigation}) => {
   const [showGngOdr, setShowGngOrd] = useState(false);
   const [userLat, setUserLat] = useState();
   const [userLong, setUserLong] = useState();
+  const [aginOrder, setAgainOrder] = useState(false);
   const dispatch = useDispatch();
-  const translateY = useRef(new Animated.Value(0)).current;
   const verticalVal = useRef(new Animated.Value(0)).current;
-  const slideAnimation = useRef(new Animated.Value(0)).current;
-
-  const {userId, userName, userMail, userContact, Status} = useSelector(
-    reducers => reducers.cartReducer,
-  );
+  const timeDuration = useState(10);
+  const slideAnimation = React.useRef(new Animated.Value(width)).current;
+  const {userId} = useSelector(reducers => reducers.cartReducer);
 
   const updateStatus = item => {
     dispatch(confirmOrder('Confirmed'));
@@ -260,6 +261,25 @@ const HomeScreen = ({navigation}) => {
         setDuration(json.rows[0].elements[0].duration.text);
       });
   };
+  const ColorAnimation = () => {
+    Animated.sequence([
+      Animated.timing(slideAnimation, {
+        toValue: 0,
+        duration: 1,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnimation, {
+        toValue: width,
+        duration: 15 * 1000,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setOrder(false);
+      setTimeout(() => {
+        setAgainOrder(false);
+      }, 1000);
+    });
+  };
 
   const renderOrders = ({item, index}) => {
     getTimeandDuration(item, index);
@@ -273,7 +293,20 @@ const HomeScreen = ({navigation}) => {
     if (duration !== '' && distancee < 10 && item.OrderDone === false) {
       return (
         <View style={style.orderCard}>
+          {ColorAnimation()}
           {handleSound(sound)}
+          <Animated.View
+            style={[
+              StyleSheet.absoluteFillObject,
+              {
+                borderRadius: 7,
+                backgroundColor: 'red',
+                height: 4,
+                width: width,
+                transform: [{translateX: slideAnimation}],
+              },
+            ]}
+          />
           <Text style={style.duractionTxt}>{duration} </Text>
           <View style={style.orderSubCard}>
             <View style={style.orderCardText}>
@@ -474,6 +507,32 @@ const HomeScreen = ({navigation}) => {
             loop={true}
           />
         </View>
+      ) : null}
+
+      {aginOrder ? (
+        <TouchableOpacity
+          activeOpacity={0.9}
+          style={[
+            style.acceptBtn,
+            {
+              bottom: 10,
+              position: 'absolute',
+              width: '50%',
+              alignSelf: 'center',
+            },
+          ]}
+          onPress={() => {
+            setTimeout(() => {
+              setRadarLoader(false);
+              setOrder(true);
+            }, 2000);
+            setRadarLoader(true);
+            setAgainOrder(false);
+          }}>
+          <Text style={{fontSize: 15, color: 'white', fontWeight: '500'}}>
+            Request Again
+          </Text>
+        </TouchableOpacity>
       ) : null}
     </View>
   );

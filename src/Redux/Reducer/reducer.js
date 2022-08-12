@@ -8,6 +8,7 @@ const initialState = {
   Status: '',
   lat: null,
   long: null,
+  time: '',
 };
 export const cartReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -69,6 +70,11 @@ export const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         Status: action.Status,
+      };
+    case 'ORDER_TIME':
+      return {
+        ...state,
+        Time: action.Time,
       };
   }
   return state;

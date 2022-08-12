@@ -1,5 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
-
+const {width, height} = Dimensions.get('window');
 export default StyleSheet.create({
   container: {
     flex: 1,
@@ -121,14 +121,13 @@ export default StyleSheet.create({
     backgroundColor: '#8216DD',
   },
   orderCard: {
-    paddingVertical: 30,
-    paddingHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'center',
-    width: '90%',
+    width: width,
     backgroundColor: 'white',
     borderRadius: 7,
+    paddingVertical: '3%',
+    paddingHorizontal: '4%',
   },
   acceptBtn: {
     borderRadius: 25,
