@@ -12,13 +12,11 @@ const ProgressBar = ({props}) => {
           <View style={style.barGrey} />
           <View style={style.barGrey} />
           <View style={style.barGrey} />
-          <View style={style.barGrey} />
         </View>
       ) : Status === 'Work Started' ? (
         <View style={style.progress}>
           <View style={style.bar} />
           <View style={style.bar} />
-          <View style={style.barGrey} />
           <View style={style.barGrey} />
           <View style={style.barGrey} />
         </View>
@@ -28,7 +26,6 @@ const ProgressBar = ({props}) => {
           <View style={style.bar} />
           <View style={style.bar} />
           <View style={style.barGrey} />
-          <View style={style.barGrey} />
         </View>
       ) : Status === 'Completed' ? (
         <View style={style.progress}>
@@ -36,19 +33,8 @@ const ProgressBar = ({props}) => {
           <View style={style.bar} />
           <View style={style.bar} />
           <View style={style.bar} />
-          <View style={style.bar} />
-          <View style={style.bar} />
         </View>
-      ) : (
-        <View style={style.progress}>
-          <View style={style.bar} />
-          <View style={style.bar} />
-          <View style={style.bar} />
-          <View style={style.bar} />
-          <View style={style.bar} />
-          <View style={style.bar} />
-        </View>
-      )}
+      ) : null}
     </>
   );
 };

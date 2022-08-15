@@ -1,0 +1,72 @@
+import {Dimensions, StyleSheet} from 'react-native';
+const {width, height} = Dimensions.get('window');
+export default StyleSheet.create({
+  container: {flex: 1, backgroundColor: '#fff'},
+  subTxt: {
+    color: 'black',
+    fontWeight: '600',
+    fontSize: 16,
+    marginLeft: 15,
+  },
+  subContainers: {
+    paddingHorizontal: '9%',
+    marginBottom: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+    height: 52,
+  },
+  subImg: {
+    width: 22,
+    height: 22,
+  },
+  naemTxt: {
+    paddingHorizontal: '5%',
+    fontSize: 22,
+    color: 'black',
+    fontWeight: '700',
+    marginTop: 30,
+  },
+  subTitle: {
+    paddingHorizontal: '5%',
+    fontSize: 20,
+    color: 'black',
+    fontWeight: '700',
+    marginTop: 3,
+  },
+  headerTxt: {
+    lineHeight: 22,
+    paddingHorizontal: '5%',
+    fontSize: 14,
+    color: 'black',
+    fontWeight: '600',
+    marginTop: 8,
+  },
+  headerSubTitle: {
+    paddingHorizontal: '5%',
+    fontSize: 15,
+    color: 'grey',
+    marginTop: 8,
+  },
+  loginBtn: {
+    width: '70%',
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: height / 5,
+    backgroundColor: 'black',
+    alignSelf: 'center',
+  },
+  picBtn: {
+    marginTop: height * 0.1,
+    backgroundColor: '#EDF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    alignSelf: 'center',
+    width: width * 0.8,
+    height: height * 0.3,
+  },
+  realImg: {borderRadius: 10, width: width * 0.8, height: height * 0.3},
+});

@@ -21,7 +21,9 @@ function SplashScreen({navigation}) {
   const [color, setColor] = useState('white');
   const [networkModal, setNetworkModal] = useState(false);
   const dispatch = useDispatch();
-  const {userId} = useSelector(reducers => reducers.cartReducer);
+  const {userId, Pic1, Pic2, Pic3} = useSelector(
+    reducers => reducers.cartReducer,
+  );
   const scaleValue = useRef(new Animated.ValueXY({x: 0, y: 70})).current;
 
   useEffect(() => {

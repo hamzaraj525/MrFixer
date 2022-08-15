@@ -47,7 +47,7 @@ function SignUpOtpp({navigation, props, route}) {
         setLoader(false);
         dispatch(updateUserName(Name));
         dispatch(updateUserMail(email));
-        navigation.replace('Home');
+        navigation.replace('DocRegistration', {userKey: userKey});
         console.log('Home screen');
       })
       .catch(error => {

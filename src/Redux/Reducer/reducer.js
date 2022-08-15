@@ -9,6 +9,9 @@ const initialState = {
   lat: null,
   long: null,
   time: '',
+  Pic1: '',
+  Pic2: '',
+  Pic3: '',
 };
 export const cartReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -75,6 +78,21 @@ export const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         Time: action.Time,
+      };
+    case 'FIXER_PICS_1':
+      return {
+        ...state,
+        Pic1: action.Pic1,
+      };
+    case 'FIXER_PICS_2':
+      return {
+        ...state,
+        Pic2: action.Pic2,
+      };
+    case 'FIXER_PICS_3':
+      return {
+        ...state,
+        Pic3: action.Pic3,
       };
   }
   return state;

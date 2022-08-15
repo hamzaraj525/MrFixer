@@ -10,6 +10,9 @@ import Verify from '../Authentication/Otp/Verify';
 import HomeScreen from '../Home/HomeScreen';
 import OrderDetail from '../OrderDetail/OrderDetail';
 import ProfileEditt from '../ProfileEdit/ProfileEditt';
+import DocRegDetails from './../DocRegDetails/DocRegDetails';
+import DocRegistration from './../DocRegistration/DocRegistration';
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -25,7 +28,11 @@ const OtpStack = () => (
       headerShown: false,
     }}>
     <Stack.Screen options={{header: () => null}} name="Otp" component={Otp} />
-
+    <Stack.Screen
+      options={{header: () => null}}
+      name="Verify"
+      component={Verify}
+    />
     <Stack.Screen
       options={{header: () => null}}
       name="SignUpOtpp"
@@ -33,8 +40,13 @@ const OtpStack = () => (
     />
     <Stack.Screen
       options={{header: () => null}}
-      name="Verify"
-      component={Verify}
+      name="DocRegistration"
+      component={DocRegistration}
+    />
+    <Stack.Screen
+      options={{header: () => null}}
+      name="DocRegDetails"
+      component={DocRegDetails}
     />
   </Stack.Navigator>
 );

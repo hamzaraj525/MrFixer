@@ -85,3 +85,24 @@ export const addTimeOfOrder = Time => {
     Time: Time,
   };
 };
+export const addFixerPic1 = Pic1 => {
+  console.log('fixerpic1----------' + Pic1);
+  return {
+    type: 'FIXER_PICS_1',
+    Pic1: Pic1,
+  };
+};
+export const addFixerPic2 = Pic2 => {
+  console.log('fixerpic2----------' + Pic2);
+  return {
+    type: 'FIXER_PICS_2',
+    Pic2: Pic2,
+  };
+};
+export const addFixerPic3 = Pic3 => {
+  console.log('fixerpic3----------' + Pic3);
+  return {
+    type: 'FIXER_PICS_3',
+    Pic3: Pic3,
+  };
+};

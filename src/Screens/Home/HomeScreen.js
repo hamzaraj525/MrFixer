@@ -220,7 +220,6 @@ const HomeScreen = ({navigation}) => {
   }, [lat, long, toggle]);
 
   const goOnline = () => {
-    setOrder(false);
     setLoader(true);
     setTimeout(() => {
       setToggle(!toggle);
@@ -301,7 +300,7 @@ const HomeScreen = ({navigation}) => {
               {
                 borderRadius: 7,
                 backgroundColor: 'red',
-                height: 4,
+                height: 3,
                 width: width,
                 transform: [{translateX: slideAnimation}],
               },
@@ -345,7 +344,7 @@ const HomeScreen = ({navigation}) => {
               activeOpacity={0.9}
               style={style.acceptBtn}
               onPress={() => {
-                setOrder(!order);
+                setOrder(false);
                 setTimeout(() => {
                   setShowGngOrd(true);
                 }, 1000);
@@ -358,16 +357,44 @@ const HomeScreen = ({navigation}) => {
           </View>
         </View>
       );
+    } else if (item.OrderDone == true) {
+      return (
+        <View
+          style={{
+            backgroundColor: '#fff',
+            padding: 10,
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: width,
+          }}>
+          {handleSound(sound)}
+          <Text
+            style={{
+              fontSize: 18,
+              color: 'black',
+              fontWeight: '500',
+            }}>
+            Cuurently No Orders Found
+          </Text>
+        </View>
+      );
     }
   };
 
   const showOrders = () => {
     return (
-      <FlatList
-        data={list}
-        renderItem={renderOrders}
-        keyExtractor={item => item.key}
-      />
+      <Animated.View
+        animation="slideInUp"
+        style={{
+          position: 'absolute',
+          bottom: 0,
+        }}>
+        <FlatList
+          data={list}
+          renderItem={renderOrders}
+          keyExtractor={item => item.key}
+        />
+      </Animated.View>
     );
   };
 
@@ -477,16 +504,7 @@ const HomeScreen = ({navigation}) => {
             />
           ) : null}
 
-          {order ? (
-            <View
-              animation="slideInUp"
-              style={{
-                position: 'absolute',
-                bottom: 20,
-              }}>
-              {showOrders()}
-            </View>
-          ) : null}
+          {order ? <>{showOrders()}</> : null}
 
           {showGngOdr ? <TopLocBar userLocTxt={userLocTxt} /> : null}
         </>

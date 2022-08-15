@@ -20,6 +20,7 @@ import CelebrteModal from './CelebrteModal';
 const RateModal = props => {
   const [starCount, setStart] = useState(4);
   const [loaderLotie, setLoLotte] = useState(false);
+  const {userName} = useSelector(reducers => reducers.cartReducer);
 
   const ratingCompleted = rating => {
     console.log('Rating is: ' + rating);
@@ -48,7 +49,7 @@ const RateModal = props => {
                 style={[styles.clientName, {fontSize: 15, fontWeight: '400'}]}>
                 How was your Client?
               </Text>
-              <Text style={styles.clientName}>{props.userNameTxt}</Text>
+              <Text style={styles.clientName}>{userName}</Text>
 
               <Rating
                 rating={starCount}
