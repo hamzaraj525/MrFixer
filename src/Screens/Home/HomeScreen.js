@@ -34,6 +34,7 @@ const sound = new Sound('simplenotification.mp3');
 const {width, height} = Dimensions.get('window');
 
 const HomeScreen = ({navigation}) => {
+  const GOOGLE_MAPS_APIKEY = 'AIzaSyDAhaR1U_-EQJZu4Ckm0iUQ4gxSWqIMOvY';
   const [lat, setLat] = useState();
   const [order, setOrder] = useState(false);
   const [orderKey, setOrderKey] = useState();
@@ -478,7 +479,7 @@ const HomeScreen = ({navigation}) => {
               style={[
                 style.botomContainerTwo,
                 {
-                  backgroundColor: color ? '#82168D' : 'white',
+                  backgroundColor: color ? '#3372e2' : 'white',
                   justifyContent: 'center',
                 },
               ]}>

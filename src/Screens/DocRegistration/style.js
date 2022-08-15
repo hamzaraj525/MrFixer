@@ -1,5 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
-
+const {width, height} = Dimensions.get('window');
 export default StyleSheet.create({
   container: {
     flex: 1,
@@ -26,7 +26,7 @@ export default StyleSheet.create({
   },
   naemTxt: {
     paddingHorizontal: '5%',
-    fontSize: 25,
+    fontSize: 29,
     color: 'black',
     fontWeight: '700',
     marginTop: 30,
@@ -35,13 +35,29 @@ export default StyleSheet.create({
     paddingHorizontal: '9%',
     fontSize: 17,
     color: 'black',
-    fontWeight: '600',
+    fontWeight: '700',
     marginTop: 8,
+  },
+  subMitTxt: {
+    paddingHorizontal: '9%',
+    fontSize: 17,
+    color: 'black',
+    fontWeight: '700',
+    paddingBottom: 10,
   },
   headerSubTitle: {
     paddingHorizontal: '9%',
     fontSize: 15,
     color: 'grey',
-    marginTop: 8,
+    marginTop: 5,
+  },
+  loginBtn: {
+    width: '70%',
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: height / 5,
+    backgroundColor: 'black',
+    alignSelf: 'center',
   },
 });

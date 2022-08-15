@@ -24,12 +24,13 @@ const styles = StyleSheet.create({
   topViewContain: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: '3%',
+    paddingVertical: '6%',
+    paddingHorizontal: '2%',
     position: 'absolute',
     top: 20,
     width: '90%',
     alignSelf: 'center',
-    backgroundColor: '#82168D',
+    backgroundColor: '#3372e2',
     borderRadius: 8,
   },
   locImg: {

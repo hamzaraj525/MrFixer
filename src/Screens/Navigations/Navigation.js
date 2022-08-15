@@ -12,7 +12,7 @@ import OrderDetail from '../OrderDetail/OrderDetail';
 import ProfileEditt from '../ProfileEdit/ProfileEditt';
 import DocRegDetails from './../DocRegDetails/DocRegDetails';
 import DocRegistration from './../DocRegistration/DocRegistration';
-
+import AccReady from './../AccReady/AccReady';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -47,6 +47,11 @@ const OtpStack = () => (
       options={{header: () => null}}
       name="DocRegDetails"
       component={DocRegDetails}
+    />
+    <Stack.Screen
+      options={{header: () => null}}
+      name="AccReady"
+      component={AccReady}
     />
   </Stack.Navigator>
 );

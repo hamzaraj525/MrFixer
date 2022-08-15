@@ -23,6 +23,7 @@ import {
   addFixerPic3,
 } from '../../Redux/Action/actions';
 import database from '@react-native-firebase/database';
+import CompleteModal from './../../Components/Modal/CompleteModal';
 const {width, height} = Dimensions.get('window');
 
 const DocRegDetails = ({route}) => {
@@ -31,6 +32,7 @@ const DocRegDetails = ({route}) => {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [loader, setLoader] = useState(false);
+  const [showCompleteModal, setCompleteModal] = useState(false);
   const [transferred, setTransferred] = useState(0);
   const {Item, userKey} = route.params;
   const {Pic1, Pic2, Pic3, userName} = useSelector(
@@ -46,6 +48,7 @@ const DocRegDetails = ({route}) => {
         })
         .then(() => {
           setImage(null);
+          setCompleteModal(true);
           console.log('pic1updated.');
         });
     } else if (Item.title == 'CNIC Back Side') {
@@ -56,6 +59,7 @@ const DocRegDetails = ({route}) => {
         })
         .then(() => {
           setImage(null);
+          setCompleteModal(true);
           console.log('pic2 updated.');
         });
     } else if (Item.title == 'Fixer Photo') {
@@ -66,9 +70,13 @@ const DocRegDetails = ({route}) => {
         })
         .then(() => {
           setImage(null);
+          setCompleteModal(true);
           console.log('pic3 updated.');
         });
     }
+  };
+  const closeModal = () => {
+    setCompleteModal(false);
   };
 
   const takePhotoFromCamera = () => {
@@ -162,7 +170,7 @@ const DocRegDetails = ({route}) => {
           </>
         ) : Item.title === 'Fixer Photo' ? (
           <>
-            <Text style={style.naemTxt}>We need a profile photos</Text>
+            <Text style={style.naemTxt}>We need a profile photo</Text>
             <Text style={style.headerTxt}>
               Must be a forward-facing, centered photo including the driver’s
               full face and top of shoulders, with no sunglasses Must be a photo
@@ -190,7 +198,10 @@ const DocRegDetails = ({route}) => {
               takePhotoFromCamera();
             }
           }}
-          style={style.loginBtn}>
+          style={[
+            style.loginBtn,
+            {backgroundColor: uploading ? 'grey' : 'black'},
+          ]}>
           {uploading || loader ? (
             <ActivityIndicator style={{}} size="large" color="white" />
           ) : (
@@ -204,6 +215,10 @@ const DocRegDetails = ({route}) => {
             </Text>
           )}
         </TouchableOpacity>
+        <CompleteModal
+          showCompleteModal={showCompleteModal}
+          closeModal={closeModal}
+        />
       </ScrollView>
     </SafeAreaView>
   );

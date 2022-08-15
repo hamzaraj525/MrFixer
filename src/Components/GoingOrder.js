@@ -29,13 +29,13 @@ const GoingOrder = props => {
         <TouchableOpacity
           style={{
             elevation: 2,
-            padding: 11,
+            padding: 9,
             borderRadius: 30,
-            backgroundColor: '#82168D',
+            backgroundColor: '#3372e2',
             flexDirection: 'row',
             justifyContent: 'space-evenly',
             alignItems: 'center',
-            width: 144,
+            width: 145,
           }}
           activeOpacity={0.8}
           onPress={() => {
@@ -149,6 +149,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: '2.7%',
     paddingHorizontal: '5%',
-    backgroundColor: '#8216DD',
+    backgroundColor: '#3372e2',
   },
 });

@@ -72,6 +72,12 @@ function Verify({navigation, props, route}) {
               key: newReference.key,
               userId: results.user._user.uid,
               userPhone: results.user._user.phoneNumber,
+              FixerPic1: '',
+              FixerPic2: '',
+              FixerPic3: '',
+              pic1Verified: false,
+              pic2Verified: false,
+              pic3Verified: false,
             })
             .then(() => {
               dispatch(
