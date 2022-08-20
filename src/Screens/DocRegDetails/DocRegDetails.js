@@ -49,7 +49,7 @@ const DocRegDetails = ({route}) => {
         .then(() => {
           setImage(null);
           setCompleteModal(true);
-          console.log('pic1updated.');
+          console.log('pic1 updated.');
         });
     } else if (Item.title == 'CNIC Back Side') {
       database()
@@ -180,11 +180,29 @@ const DocRegDetails = ({route}) => {
           </>
         ) : null}
 
-        <View style={style.picBtn}>
+        <View
+          style={[
+            style.picBtn,
+            {
+              borderRadius: Item.title == 'Fixer Photo' ? 250 / 2 : 10,
+              width: Item.title == 'Fixer Photo' ? 250 : width * 0.8,
+              height: Item.title == 'Fixer Photo' ? 250 : height * 0.3,
+            },
+          ]}>
           {image === null ? (
             <MaterialCommunityIcons name="camera" size={50} color={'grey'} />
           ) : (
-            <Image source={{uri: image}} style={style.realImg} />
+            <Image
+              source={{uri: image}}
+              style={[
+                style.realImg,
+                {
+                  borderRadius: Item.title == 'Fixer Photo' ? 250 / 2 : 10,
+                  width: Item.title == 'Fixer Photo' ? 250 : width * 0.8,
+                  height: Item.title == 'Fixer Photo' ? 250 : height * 0.3,
+                },
+              ]}
+            />
           )}
         </View>
 

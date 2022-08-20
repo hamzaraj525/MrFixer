@@ -19,7 +19,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import database from '@react-native-firebase/database';
 import Geolocation from '@react-native-community/geolocation';
 import Geocoder from 'react-native-geocoding';
-import {confirmOrder, addTimeOfOrder} from './../../Redux/Action/actions';
+import {
+  confirmOrder,
+  addTimeOfOrder,
+  addOrderUid,
+} from './../../Redux/Action/actions';
 import {getPreciseDistance} from 'geolib';
 import FastImage from 'react-native-fast-image';
 import Images from '../../Constraints/Images';
@@ -44,6 +48,7 @@ const HomeScreen = ({navigation}) => {
   const [userPhone, setUsrPhone] = useState();
   const [long, setLong] = useState();
   const [list, setList] = useState([]);
+  const [doL, setDo] = useState([]);
   const [locationText, setLocationText] = useState('');
   const [userNameTxt, setUserName] = useState('');
   const [userLocTxt, setUserlocTxt] = useState('');
@@ -66,6 +71,7 @@ const HomeScreen = ({navigation}) => {
 
   const updateStatus = item => {
     dispatch(confirmOrder('Confirmed'));
+    dispatch(addOrderUid(item.userKey));
     database()
       .ref('cartItems/' + item.key)
       .update({
@@ -108,6 +114,8 @@ const HomeScreen = ({navigation}) => {
               userLocation: child.val().userLocation,
               Status: child.val().Status,
               OrderDone: child.val().OrderDone,
+              userId: child.val().userId,
+              userKey: child.val().userKey,
             });
           });
           setList(li);
@@ -173,6 +181,19 @@ const HomeScreen = ({navigation}) => {
   };
 
   useEffect(() => {
+    database()
+      .ref('/users')
+      .on('value', snapshot => {
+        var li = [];
+        snapshot.forEach(child => {
+          console.log(child.val());
+          li.push({
+            key: child.key,
+            Rating: child.val().Rating,
+          });
+        });
+        setDo(li);
+      });
     if (toggle) {
       getOrders();
     } else {
@@ -203,20 +224,6 @@ const HomeScreen = ({navigation}) => {
           easing: Easing.inOut(Easing.quad),
         }).start();
       }
-      // Animated.loop(
-      //   Animated.sequence([
-      //     Animated.timing(slideAnimation, {
-      //       toValue: 255,
-      //       duration: 2000,
-      //       useNativeDriver: true,
-      //     }),
-      //     Animated.timing(slideAnimation, {
-      //       toValue: 0,
-      //       duration: 2000,
-      //       useNativeDriver: true,
-      //     }),
-      //   ]),
-      // ).start();
     });
   }, [lat, long, toggle]);
 
@@ -440,12 +447,14 @@ const HomeScreen = ({navigation}) => {
 
           {!toggle ? (
             <Pressable
+              style={style.profileBtn}
+              activeOpacity={0.9}
               onPress={() => {
                 navigation.navigate('Profile');
               }}>
               <FastImage
-                resizeMode="cover"
                 style={style.profileImg}
+                resizeMode="cover"
                 source={Images.profileImgHome}
               />
             </Pressable>
@@ -469,7 +478,7 @@ const HomeScreen = ({navigation}) => {
                 delay={800}
                 animation="slideInUp"
                 style={[style.txtItems, {color: color ? '#82168D' : 'black'}]}>
-                Your're Offline
+                You're Offline
               </Animatable.Text>
             </View>
           ) : null}

@@ -9,7 +9,11 @@ export default StyleSheet.create({
     color: 'black',
     fontWeight: '600',
     fontSize: 16,
-    marginLeft: 15,
+  },
+  subText: {
+    color: 'grey',
+    fontWeight: '600',
+    fontSize: 12,
   },
   subContainers: {
     paddingHorizontal: '9%',
@@ -43,13 +47,14 @@ export default StyleSheet.create({
     fontSize: 17,
     color: 'black',
     fontWeight: '700',
-    paddingBottom: 10,
+    paddingBottom: 5,
   },
   headerSubTitle: {
     paddingHorizontal: '9%',
     fontSize: 15,
     color: 'grey',
     marginTop: 5,
+    paddingBottom: 5,
   },
   loginBtn: {
     width: '70%',

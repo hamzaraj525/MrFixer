@@ -106,3 +106,10 @@ export const addFixerPic3 = Pic3 => {
     Pic3: Pic3,
   };
 };
+export const addOrderUid = orderUid => {
+  console.log('orderUid--------------------------------' + orderUid);
+  return {
+    type: 'ORDER_UID',
+    orderUid: orderUid,
+  };
+};

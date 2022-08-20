@@ -43,7 +43,7 @@ function ProfileEditt({navigation, props, route}) {
   const {userId, userContact} = useSelector(reducers => reducers.cartReducer);
 
   const uploadImage = async () => {
-    if (image == null) {
+    if (image === null) {
       alert('Please select an image');
       return null;
     }
@@ -91,17 +91,15 @@ function ProfileEditt({navigation, props, route}) {
       compressImageQuality: 0.7,
     })
       .then(img => {
-        console.log(
-          'image is here-----' + Platform.OS === 'ios'
-            ? img.sourceURL
-            : img.path,
-        );
         const imageUri = Platform.OS === 'ios' ? img.sourceURL : img.path;
         setImage(imageUri);
-        uploadImage();
+        console.log('imageUri-------' + imageUri);
       })
       .catch(error => {
         console.log(error);
+      })
+      .finally(() => {
+        uploadImage();
       });
   };
 

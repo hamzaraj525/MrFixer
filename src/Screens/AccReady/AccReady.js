@@ -28,13 +28,7 @@ function AccReady({navigation}) {
         hidden={true}
         backgroundColor="#0E0A30"
       />
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: '#0E0A30',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
+      <View style={styles.imgView}>
         <Image
           resizeMode="contain"
           source={require('./../../../assets/Images/workCartoon.png')}
@@ -49,17 +43,10 @@ function AccReady({navigation}) {
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => {
-            navigation.navigate('HomeScreen');
+            navigation.navigate('Home');
           }}
           style={[styles.loginBtn, {backgroundColor: '#3372e2'}]}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: 'bold',
-              color: 'white',
-            }}>
-            Happy Earning
-          </Text>
+          <Text style={styles.btnTxt}>Happy Earning</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -98,4 +85,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     alignSelf: 'center',
   },
+  imgView: {
+    flex: 1,
+    backgroundColor: '#0E0A30',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnTxt: {fontSize: 16, fontWeight: 'bold', color: 'white'},
 });

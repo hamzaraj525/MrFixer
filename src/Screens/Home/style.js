@@ -28,7 +28,7 @@ export default StyleSheet.create({
     fontSize: 32,
     fontWeight: '500',
   },
-  profileImg: {
+  profileBtn: {
     position: 'absolute',
     top: 10,
     left: '6%',
@@ -37,7 +37,16 @@ export default StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 52 / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileImg: {
+    width: 52,
+    borderWidth: 3,
+    borderColor: 'white',
     elevation: 9,
+    height: 52,
+    borderRadius: 52 / 2,
   },
   locImg: {
     width: 35,

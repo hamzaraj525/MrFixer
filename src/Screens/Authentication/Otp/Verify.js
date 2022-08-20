@@ -48,57 +48,54 @@ function Verify({navigation, props, route}) {
       .child('riders')
       .once('value')
       .then(snapshot => {
-        if (snapshot.exists()) {
-          setLoader(false);
-          newReference
-            .set({
-              key: newReference.key,
-              userId: results.user._user.uid,
-              userPhone: results.user._user.phoneNumber,
-            })
-            .then(() => {
-              console.log('-------exists');
-              dispatch(
-                addUserid(
-                  results.user._user.uid,
-                  results.user._user.phoneNumber,
-                ),
-              );
-              navigation.replace('Home');
+        // if (snapshot.exists()) {
+        //   setLoader(false);
+        //   newReference
+        //     .set({
+        //       key: newReference.key,
+        //       userId: results.user._user.uid,
+        //       userPhone: results.user._user.phoneNumber,
+        //     })
+        //     .then(() => {
+        //       console.log('-------exists');
+        //       dispatch(
+        //         addUserid(
+        //           results.user._user.uid,
+        //           results.user._user.phoneNumber,
+        //         ),
+        //       );
+        //       navigation.replace('Home');
+        //     });
+        // } else {
+        newReference
+          .set({
+            key: newReference.key,
+            userId: results.user._user.uid,
+            userPhone: results.user._user.phoneNumber,
+            FixerPic1: '',
+            FixerPic2: '',
+            FixerPic3: '',
+            pic1Verified: false,
+            pic2Verified: false,
+            pic3Verified: false,
+          })
+          .then(() => {
+            dispatch(
+              addUserid(results.user._user.uid, results.user._user.phoneNumber),
+            );
+          })
+          .then(() => {
+            setLoader(false);
+            navigation.replace('SignUpOtpp', {
+              results: results,
+              code: code,
+              userKey: newReference.key,
             });
-        } else {
-          newReference
-            .set({
-              key: newReference.key,
-              userId: results.user._user.uid,
-              userPhone: results.user._user.phoneNumber,
-              FixerPic1: '',
-              FixerPic2: '',
-              FixerPic3: '',
-              pic1Verified: false,
-              pic2Verified: false,
-              pic3Verified: false,
-            })
-            .then(() => {
-              dispatch(
-                addUserid(
-                  results.user._user.uid,
-                  results.user._user.phoneNumber,
-                ),
-              );
-            })
-            .then(() => {
-              setLoader(false);
-              navigation.replace('SignUpOtpp', {
-                results: results,
-                code: code,
-                userKey: newReference.key,
-              });
-            })
-            .catch(error => {
-              alert('Something went wrong' + error);
-            });
-        }
+          })
+          .catch(error => {
+            alert('Something went wrong' + error);
+          });
+        // }
       });
   };
 

@@ -16,23 +16,41 @@ import {Rating, AirbnbRating} from 'react-native-ratings';
 import {useDispatch, useSelector} from 'react-redux';
 import Constraints from '../../Constraints/Constraints';
 import CelebrteModal from './CelebrteModal';
+import database from '@react-native-firebase/database';
+
+const {width, height} = Dimensions.get('window');
 
 const RateModal = props => {
+  const dispatch = useDispatch();
   const [starCount, setStart] = useState(4);
   const [loaderLotie, setLoLotte] = useState(false);
-  const {userName} = useSelector(reducers => reducers.cartReducer);
+  const {userName, userId, orderUid} = useSelector(
+    reducers => reducers.cartReducer,
+  );
 
   const ratingCompleted = rating => {
     console.log('Rating is: ' + rating);
     setStart(rating);
   };
 
+  const rate = () => {
+    setLoLotte(true);
+    database()
+      .ref('users/' + orderUid)
+      .push({
+        Rating: [starCount],
+      })
+      .then(() => {
+        setLoLotte(false);
+        props.hideRateModal();
+        props.doHideMap();
+      });
+  };
+
   const celebrateView = () => {
     setLoLotte(true);
     setTimeout(() => {
-      setLoLotte(false);
-      props.hideRateModal();
-      props.doHideMap();
+      rate();
     }, 3000);
   };
 
@@ -46,7 +64,7 @@ const RateModal = props => {
           <Animated.View style={styles.containerr}>
             <View style={styles.whiteContainer}>
               <Text
-                style={[styles.clientName, {fontSize: 15, fontWeight: '400'}]}>
+                style={[styles.clientName, {fontSize: 15, fontWeight: '700'}]}>
                 How was your Client?
               </Text>
               <Text style={styles.clientName}>{userName}</Text>
@@ -110,11 +128,11 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     marginTop: '5%',
-    backgroundColor: 'red',
+    backgroundColor: '#1269cd',
     justifyContent: 'space-evenly',
     alignItems: 'center',
     borderRadius: 44,
-    width: '70%',
+    width: width * 0.8,
     height: 48,
   },
 
@@ -132,7 +150,7 @@ const styles = StyleSheet.create({
   },
   clientName: {
     color: 'black',
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '500',
   },
   containerr: {

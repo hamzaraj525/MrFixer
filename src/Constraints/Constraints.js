@@ -44,5 +44,5 @@ export default Constraints = {
   PERSONAL_SERVICES: 'Personal Services',
   ADD_TO_CART: 'Add to Cart',
   DONE: 'Done',
-  RATE_RIDER: 'Rate',
+  RATE_RIDER: 'Rate now',
 };

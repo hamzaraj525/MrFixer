@@ -12,6 +12,7 @@ const initialState = {
   Pic1: '',
   Pic2: '',
   Pic3: '',
+  orderUid: '',
 };
 export const cartReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -93,6 +94,11 @@ export const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         Pic3: action.Pic3,
+      };
+    case 'ORDER_UID':
+      return {
+        ...state,
+        orderUid: action.orderUid,
       };
   }
   return state;
