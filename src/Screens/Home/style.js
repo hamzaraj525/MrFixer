@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet, StatusBar} from 'react-native';
 const {width, height} = Dimensions.get('window');
 export default StyleSheet.create({
   container: {
@@ -173,5 +173,15 @@ export default StyleSheet.create({
   contentContainer: {
     flex: 1,
     alignItems: 'center',
+  },
+  backArrow: {
+    left: 10,
+    top: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    width: 50,
+    height: 50,
+    borderRadius: 50 / 2,
   },
 });

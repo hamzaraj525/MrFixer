@@ -113,3 +113,10 @@ export const addOrderUid = orderUid => {
     orderUid: orderUid,
   };
 };
+export const addOrderKey = orderKey => {
+  console.log('orderKey--------------------------------' + orderKey);
+  return {
+    type: 'ORDER_KEY',
+    orderKey: orderKey,
+  };
+};

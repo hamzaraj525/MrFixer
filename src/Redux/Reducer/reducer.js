@@ -13,6 +13,7 @@ const initialState = {
   Pic2: '',
   Pic3: '',
   orderUid: '',
+  orderKey: '',
 };
 export const cartReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -99,6 +100,11 @@ export const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         orderUid: action.orderUid,
+      };
+    case 'ORDER_KEY':
+      return {
+        ...state,
+        orderKey: action.orderKey,
       };
   }
   return state;

@@ -1,4 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
+const {width, height} = Dimensions.get('window');
 
 export default StyleSheet.create({
   container: {flex: 1, alignItems: 'center', backgroundColor: 'white'},
@@ -112,11 +113,15 @@ export default StyleSheet.create({
   },
   logoutBtn: {
     alignItems: 'center',
-    height: 55,
-    width: 55,
-    borderRadius: 55 / 2,
+    height: 60,
+    width: 60,
+    borderRadius: 12,
     justifyContent: 'center',
-    borderWidth: 0.9,
-    borderColor: 'grey',
+    backgroundColor: '#f5f5f5',
+  },
+  containTxt: {
+    color: 'black',
+    fontSize: 12,
+    fontWeight: '700',
   },
 });

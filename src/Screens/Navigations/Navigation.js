@@ -12,6 +12,7 @@ import OrderDetail from '../OrderDetail/OrderDetail';
 import ProfileEditt from '../ProfileEdit/ProfileEditt';
 import DocRegDetails from './../DocRegDetails/DocRegDetails';
 import DocRegistration from './../DocRegistration/DocRegistration';
+import History from './../History/History';
 import AccReady from './../AccReady/AccReady';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -81,6 +82,11 @@ function Navigation({}) {
         options={{header: () => null}}
         name="Profile"
         component={ProfileEditt}
+      />
+      <Stack.Screen
+        options={{header: () => null}}
+        name="History"
+        component={History}
       />
 
       <Stack.Screen

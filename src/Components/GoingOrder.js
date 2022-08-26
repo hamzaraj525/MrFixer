@@ -60,6 +60,7 @@ const GoingOrder = props => {
       </View>
 
       <Animatable.View
+        useNativeDriver={true}
         delay={800}
         animation="slideInUp"
         style={[
@@ -78,6 +79,7 @@ const GoingOrder = props => {
             flexDirection: 'row',
           }}>
           <Animatable.View
+            useNativeDriver={true}
             animation="slideInUp"
             style={{
               justifyContent: 'center',
@@ -97,11 +99,13 @@ const GoingOrder = props => {
           </Animatable.View>
 
           <Animatable.Text
+            useNativeDriver={true}
             animation="slideInUp"
             style={[styles.txtItems, {color: 'black', fontSize: 16}]}>
             Going For Order
           </Animatable.Text>
           <Animatable.View
+            useNativeDriver={true}
             style={[
               styles.arrivBtn,
               {

@@ -18,6 +18,7 @@ import database from '@react-native-firebase/database';
 import Constraints from '../../Constraints/Constraints';
 import ImagePicker from 'react-native-image-crop-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import NameEditModal from './../../Components/Modal/NameEditModal';
 import MailEditModal from './../../Components/Modal/MailEditModal';
@@ -32,7 +33,6 @@ function ProfileEditt({navigation, props, route}) {
   const [listt, setList] = useState([]);
   const [image, setImage] = useState(null);
   const [loader, setLoader] = useState(false);
-  const [userNme, setUserNme] = useState('');
   const [idEdit, setId] = React.useState('');
   const [mailEdit, setMailEdit] = React.useState();
   const [nameEdit, setNameEdit] = React.useState();
@@ -127,7 +127,6 @@ function ProfileEditt({navigation, props, route}) {
         });
         setList(li);
         setLoader(false);
-        setUserNme(li[0].userNamee);
       });
   }, []);
 
@@ -257,11 +256,16 @@ function ProfileEditt({navigation, props, route}) {
           <Text style={style.prfileTxt}>{Constraints.PROFILE} 😃</Text>
           <View style={style.imgContainer}>
             <Pressable
-              style={style.shareBtn}
+              style={style.logoutBtn}
               onPress={() => {
-                shareApp();
+                navigation.navigate('History');
               }}>
-              <FontAwesome5 name={'share-alt'} size={25} color={'black'} />
+              <MaterialCommunityIcons
+                name={'history'}
+                size={23}
+                color={'black'}
+              />
+              <Text style={style.containTxt}>Orders</Text>
             </Pressable>
 
             <Pressable
@@ -285,16 +289,31 @@ function ProfileEditt({navigation, props, route}) {
                 />
               )}
             </Pressable>
+
             <Pressable
               style={style.logoutBtn}
               onPress={() => {
                 showAlert();
               }}>
-              <Ionicons name={'log-out'} size={30} color={'black'} />
+              <MaterialCommunityIcons
+                name={'logout'}
+                size={23}
+                color={'black'}
+              />
+              <Text style={style.containTxt}>Logout</Text>
             </Pressable>
           </View>
 
-          <Text style={style.userNmeStyle}>{userNme}</Text>
+          {listt.map(element => {
+            if (element.userIdd === userId) {
+              return (
+                <Text style={style.userNmeStyle}>{element.userNamee}</Text>
+              );
+            } else {
+              return null;
+            }
+          })}
+
           {loader ? (
             <ActivityIndicator
               style={{marginTop: 50}}

@@ -23,6 +23,9 @@ import {
   confirmOrder,
   addTimeOfOrder,
   addOrderUid,
+  addOrderKey,
+  addLatitude,
+  addLontitude,
 } from './../../Redux/Action/actions';
 import {getPreciseDistance} from 'geolib';
 import FastImage from 'react-native-fast-image';
@@ -34,13 +37,14 @@ import GoingOrder from '../../Components/GoingOrder';
 import TopLocBar from '../../Components/TopLocBar';
 import BottomSheet from '@gorhom/bottom-sheet';
 import LottieView from 'lottie-react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 const sound = new Sound('simplenotification.mp3');
 const {width, height} = Dimensions.get('window');
 
 const HomeScreen = ({navigation}) => {
-  const GOOGLE_MAPS_APIKEY = 'AIzaSyDAhaR1U_-EQJZu4Ckm0iUQ4gxSWqIMOvY';
   const [lat, setLat] = useState();
   const [order, setOrder] = useState(false);
+  const [go, setGo] = useState(false);
   const [orderKey, setOrderKey] = useState();
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState('');
@@ -70,8 +74,14 @@ const HomeScreen = ({navigation}) => {
   const {userId} = useSelector(reducers => reducers.cartReducer);
 
   const updateStatus = item => {
+    setOrder(!order);
+    setTimeout(() => {
+      setShowGngOrd(true);
+    }, 1000);
     dispatch(confirmOrder('Confirmed'));
     dispatch(addOrderUid(item.userKey));
+    dispatch(addOrderKey(item.key));
+
     database()
       .ref('cartItems/' + item.key)
       .update({
@@ -120,7 +130,6 @@ const HomeScreen = ({navigation}) => {
           });
           setList(li);
           setStatus(li[0].Status);
-          console.log('ssssss---' + li[0].Status);
           setUserlocTxt(li[0].userLocation);
           console.log('Loc---' + li[0].userLocation);
           setUserLat(li[0].latitude);
@@ -158,6 +167,8 @@ const HomeScreen = ({navigation}) => {
       position => {
         setLat(position.coords.latitude);
         setLong(position.coords.longitude);
+        dispatch(addLatitude(position.coords.latitude));
+        dispatch(addLontitude(position.coords.longitude));
         console.log('location:' + lat, long);
       },
       error => {
@@ -186,7 +197,6 @@ const HomeScreen = ({navigation}) => {
       .on('value', snapshot => {
         var li = [];
         snapshot.forEach(child => {
-          console.log(child.val());
           li.push({
             key: child.key,
             Rating: child.val().Rating,
@@ -194,6 +204,7 @@ const HomeScreen = ({navigation}) => {
         });
         setDo(li);
       });
+
     if (toggle) {
       getOrders();
     } else {
@@ -205,6 +216,7 @@ const HomeScreen = ({navigation}) => {
     } else {
       _getCurrentLocation();
     }
+
     Animated.timing(verticalVal, {
       toValue: 10,
       duration: 1000,
@@ -234,11 +246,10 @@ const HomeScreen = ({navigation}) => {
       setLoader(false);
       setColor(true);
       setDataList(true);
-
       setTimeout(() => {
         setRadarLoader(true);
         setTimeout(() => {
-          setOrder(true);
+          setOrder(!order);
           setDataList(false);
           setRadarLoader(false);
         }, 4000);
@@ -268,6 +279,7 @@ const HomeScreen = ({navigation}) => {
         setDuration(json.rows[0].elements[0].duration.text);
       });
   };
+
   const ColorAnimation = () => {
     Animated.sequence([
       Animated.timing(slideAnimation, {
@@ -280,12 +292,14 @@ const HomeScreen = ({navigation}) => {
         duration: 15 * 1000,
         useNativeDriver: true,
       }),
-    ]).start(() => {
-      setOrder(false);
+    ]).start();
+
+    setTimeout(() => {
+      setOrder(!order);
       setTimeout(() => {
-        setAgainOrder(false);
-      }, 1000);
-    });
+        setAgainOrder(!aginOrder);
+      }, 500);
+    }, 15 * 1000);
   };
 
   const renderOrders = ({item, index}) => {
@@ -297,9 +311,10 @@ const HomeScreen = ({navigation}) => {
     );
 
     const distancee = pdis / 1000;
-    if (duration !== '' && distancee < 10 && item.OrderDone === false) {
+    if (duration !== '' && distancee < 20 && item.OrderDone === false) {
       return (
         <View style={style.orderCard}>
+          {console.log('RandomList-----------------------' + item.TotalPrice)}
           {ColorAnimation()}
           {handleSound(sound)}
           <Animated.View
@@ -352,10 +367,6 @@ const HomeScreen = ({navigation}) => {
               activeOpacity={0.9}
               style={style.acceptBtn}
               onPress={() => {
-                setOrder(false);
-                setTimeout(() => {
-                  setShowGngOrd(true);
-                }, 1000);
                 updateStatus(item);
               }}>
               <Text style={{fontSize: 15, color: 'white', fontWeight: '500'}}>
@@ -365,31 +376,33 @@ const HomeScreen = ({navigation}) => {
           </View>
         </View>
       );
-    } else if (item.OrderDone == true) {
+    } else if (item.OrderDone === true) {
       return (
-        <View
-          style={{
-            backgroundColor: '#fff',
-            padding: 10,
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: width,
-          }}>
-          {handleSound(sound)}
-          <Text
+        <>
+          <View
             style={{
-              fontSize: 18,
-              color: 'black',
-              fontWeight: '500',
+              backgroundColor: '#fff',
+              padding: '4%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: width,
             }}>
-            Cuurently No Orders Found
-          </Text>
-        </View>
+            <Text
+              style={{
+                fontSize: 18,
+                color: 'black',
+                fontWeight: '500',
+              }}>
+              Currently No Orders Found
+            </Text>
+          </View>
+        </>
       );
     }
   };
 
   const showOrders = () => {
+    const shuffledList = list.sort(() => 0.5 - Math.random());
     return (
       <Animated.View
         animation="slideInUp"
@@ -398,7 +411,7 @@ const HomeScreen = ({navigation}) => {
           bottom: 0,
         }}>
         <FlatList
-          data={list}
+          data={shuffledList}
           renderItem={renderOrders}
           keyExtractor={item => item.key}
         />
@@ -415,7 +428,7 @@ const HomeScreen = ({navigation}) => {
   };
 
   const doHideMap = () => {
-    setOrder(false);
+    setOrder(order);
     setToggle(!toggle);
     setShowGngOrd(false);
     setDataList(false);
@@ -475,6 +488,7 @@ const HomeScreen = ({navigation}) => {
                 {backgroundColor: color ? '#82168D' : 'white'},
               ]}>
               <Animatable.Text
+                useNativeDriver={true}
                 delay={800}
                 animation="slideInUp"
                 style={[style.txtItems, {color: color ? '#82168D' : 'black'}]}>
@@ -493,6 +507,7 @@ const HomeScreen = ({navigation}) => {
                 },
               ]}>
               <Animatable.Text
+                useNativeDriver={true}
                 delay={800}
                 animation="slideInUp"
                 style={[style.txtItems, {color: color ? '#82168D' : 'black'}]}>
@@ -515,6 +530,21 @@ const HomeScreen = ({navigation}) => {
           ) : null}
 
           {order ? <>{showOrders()}</> : null}
+          {order ? (
+            <View>
+              <Pressable
+                style={style.backArrow}
+                onPress={() => {
+                  // doHideMap();
+                }}>
+                <Ionicons
+                  name={'arrow-back-outline'}
+                  size={28}
+                  color={'black'}
+                />
+              </Pressable>
+            </View>
+          ) : null}
 
           {showGngOdr ? <TopLocBar userLocTxt={userLocTxt} /> : null}
         </>
@@ -543,7 +573,7 @@ const HomeScreen = ({navigation}) => {
           style={[
             style.acceptBtn,
             {
-              bottom: 10,
+              bottom: 15,
               position: 'absolute',
               width: '50%',
               alignSelf: 'center',
@@ -552,10 +582,10 @@ const HomeScreen = ({navigation}) => {
           onPress={() => {
             setTimeout(() => {
               setRadarLoader(false);
-              setOrder(true);
+              setOrder(!order);
             }, 2000);
             setRadarLoader(true);
-            setAgainOrder(false);
+            setAgainOrder(!aginOrder);
           }}>
           <Text style={{fontSize: 15, color: 'white', fontWeight: '500'}}>
             Request Again

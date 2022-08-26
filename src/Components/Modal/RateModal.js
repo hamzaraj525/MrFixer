@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   Dimensions,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import {Rating, AirbnbRating} from 'react-native-ratings';
@@ -21,10 +22,13 @@ import database from '@react-native-firebase/database';
 const {width, height} = Dimensions.get('window');
 
 const RateModal = props => {
+  const [loader, setLoader] = useState(false);
   const dispatch = useDispatch();
+  const [list, setList] = useState([]);
+  const [Ratinglist, setRaingList] = useState([]);
   const [starCount, setStart] = useState(4);
   const [loaderLotie, setLoLotte] = useState(false);
-  const {userName, userId, orderUid} = useSelector(
+  const {userName, userId, orderUid, orderKey, lat, long} = useSelector(
     reducers => reducers.cartReducer,
   );
 
@@ -33,25 +37,57 @@ const RateModal = props => {
     setStart(rating);
   };
 
+  useEffect(() => {
+    getOrders();
+  }, []);
+
+  const getOrders = () => {
+    database()
+      .ref('/users')
+      .on('value', snapshot => {
+        var li = [];
+        snapshot.forEach(child => {
+          console.log(child.val());
+          li.push({
+            Ratings: child.val().Ratings,
+          });
+        });
+        setRaingList(li);
+        setList(li);
+      });
+  };
+
   const rate = () => {
-    setLoLotte(true);
+    setLoader(true);
     database()
       .ref('users/' + orderUid)
       .push({
-        Rating: [starCount],
+        Ratings: [...Ratinglist, starCount],
       })
       .then(() => {
-        setLoLotte(false);
-        props.hideRateModal();
-        props.doHideMap();
+        setLoader(false);
+        setLoLotte(true);
+        setTimeout(() => {
+          props.hideRateModal();
+          props.doHideMap();
+        }, 2500);
+      });
+  };
+
+  const adDFixerId = () => {
+    setLoader(true);
+    database()
+      .ref('cartItems/' + orderKey)
+      .update({
+        FixerLat: lat,
+        FixerLong: long,
+        FixerId: userId,
       });
   };
 
   const celebrateView = () => {
-    setLoLotte(true);
-    setTimeout(() => {
-      rate();
-    }, 3000);
+    adDFixerId();
+    rate();
   };
 
   return (
@@ -63,6 +99,18 @@ const RateModal = props => {
         <SafeAreaView style={styles.container}>
           <Animated.View style={styles.containerr}>
             <View style={styles.whiteContainer}>
+              {/* {list.map(item => {
+                return (
+                  <Text
+                    style={[
+                      styles.clientName,
+                      {fontSize: 15, fontWeight: '700'},
+                    ]}>
+                    {item.Ratings}
+                  </Text>
+                );
+              })} */}
+
               <Text
                 style={[styles.clientName, {fontSize: 15, fontWeight: '700'}]}>
                 How was your Client?
@@ -84,7 +132,11 @@ const RateModal = props => {
                 onPress={() => {
                   celebrateView();
                 }}>
-                <Text style={styles.okBtnTxt}>{Constraints.RATE_RIDER}</Text>
+                {loader ? (
+                  <ActivityIndicator style={{}} size="small" color="white" />
+                ) : (
+                  <Text style={styles.okBtnTxt}>{Constraints.RATE_RIDER}</Text>
+                )}
               </TouchableOpacity>
             </View>
           </Animated.View>
