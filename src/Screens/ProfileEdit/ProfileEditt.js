@@ -93,13 +93,14 @@ function ProfileEditt({navigation, props, route}) {
       .then(img => {
         const imageUri = Platform.OS === 'ios' ? img.sourceURL : img.path;
         setImage(imageUri);
-        console.log('imageUri-------' + imageUri);
+      })
+      .then(() => {
+        setTimeout(() => {
+          uploadImage();
+        }, 600);
       })
       .catch(error => {
         console.log(error);
-      })
-      .finally(() => {
-        uploadImage();
       });
   };
 

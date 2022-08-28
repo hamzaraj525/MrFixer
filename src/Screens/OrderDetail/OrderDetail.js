@@ -25,15 +25,17 @@ const OrderDetail = props => {
   const [showRateModal, setShowRateModal] = useState(false);
   const dispatch = useDispatch();
   const [loader, setLoader] = useState(false);
-  const {userId, Time, Status} = useSelector(reducers => reducers.cartReducer);
+  const {userId, Time, Status, orderKey, orderUid} = useSelector(
+    reducers => reducers.cartReducer,
+  );
   const time = moment().format('hh:mm a');
 
-  const updateStatusStarted = Item => {
+  const updateStatusStarted = () => {
     setLoader(true);
     dispatch(addTimeOfOrder(time));
     dispatch(confirmOrder('Work Started'));
     database()
-      .ref('cartItems/' + Item)
+      .ref('cartItems/' + orderKey)
       .update({
         Status: 'Work Started',
       })
@@ -43,12 +45,12 @@ const OrderDetail = props => {
       });
   };
 
-  const updateStatusWorkEnd = Item => {
+  const updateStatusWorkEnd = () => {
     setLoader(true);
     dispatch(addTimeOfOrder(time));
     dispatch(confirmOrder('Work End'));
     database()
-      .ref('cartItems/' + Item)
+      .ref('cartItems/' + orderKey)
       .update({
         Status: 'Work End',
       })
@@ -58,12 +60,12 @@ const OrderDetail = props => {
       });
   };
 
-  const updateStatusWorkDone = Item => {
+  const updateStatusWorkDone = () => {
     setLoader(true);
     dispatch(addTimeOfOrder(time));
     dispatch(confirmOrder('Completed'));
     database()
-      .ref('cartItems/' + Item)
+      .ref('cartItems/' + orderKey)
       .update({
         Status: 'Completed',
       })
@@ -107,9 +109,9 @@ const OrderDetail = props => {
             height: Dimensions.get('window').height / 3,
           }}
           source={
-            props.Status === 'Confirmed'
+            Status === 'Confirmed'
               ? Images.workConfirmLottie
-              : props.Status === 'Work Started'
+              : Status === 'Work Started'
               ? Images.workStartLottie
               : Images.workCompltdLottie
           }
@@ -120,12 +122,12 @@ const OrderDetail = props => {
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => {
-          if (props.Status === 'Confirmed') {
-            updateStatusStarted(props.Item);
-          } else if (props.Status === 'Work Started') {
-            updateStatusWorkEnd(props.Item);
-          } else if (props.Status === 'Work End') {
-            updateStatusWorkDone(props.Item);
+          if (Status === 'Confirmed') {
+            updateStatusStarted();
+          } else if (Status === 'Work Started') {
+            updateStatusWorkEnd();
+          } else if (Status === 'Work End') {
+            updateStatusWorkDone();
             setShowRateModal(true);
           } else {
           }
@@ -140,11 +142,11 @@ const OrderDetail = props => {
               fontWeight: 'bold',
               color: 'white',
             }}>
-            {props.Status === 'Confirmed'
+            {Status === 'Confirmed'
               ? 'Start Work'
-              : props.Status === 'Work Started'
+              : Status === 'Work Started'
               ? 'End Work'
-              : props.Status === 'Work End'
+              : Status === 'Work End'
               ? 'Done'
               : 'Done'}
           </Text>

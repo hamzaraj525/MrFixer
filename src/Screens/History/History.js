@@ -45,8 +45,10 @@ function History({navigation}) {
             FixerLong: child.val().FixerLong,
           });
         });
-        setLoader(false);
-        setList(li);
+        setTimeout(() => {
+          setLoader(false);
+          setList(li);
+        }, 600);
       });
   }, []);
 
@@ -154,7 +156,7 @@ function History({navigation}) {
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{paddingBottom: '10%'}}
-          style={{marginTop: '2%'}}>
+          style={{marginTop: '1%'}}>
           {OrderHistory()}
         </ScrollView>
       )}

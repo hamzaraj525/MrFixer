@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, useRef} from 'react';
+import React, {useState, useEffect, useCallback, useRef, useId} from 'react';
 import {
   TouchableOpacity,
   Easing,
@@ -52,6 +52,7 @@ const HomeScreen = ({navigation}) => {
   const [userPhone, setUsrPhone] = useState();
   const [long, setLong] = useState();
   const [list, setList] = useState([]);
+  const [earnList, setEarnList] = useState([]);
   const [doL, setDo] = useState([]);
   const [locationText, setLocationText] = useState('');
   const [userNameTxt, setUserName] = useState('');
@@ -59,6 +60,7 @@ const HomeScreen = ({navigation}) => {
   const [showText, setShowTxt] = useState(true);
   const [loader, setLoader] = useState(false);
   const [radarLoader, setRadarLoader] = useState(false);
+  const [earningModal, setEaringModal] = useState(false);
   const [color, setColor] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [dataList, setDataList] = useState(false);
@@ -73,7 +75,17 @@ const HomeScreen = ({navigation}) => {
   const slideAnimation = React.useRef(new Animated.Value(width)).current;
   const {userId} = useSelector(reducers => reducers.cartReducer);
 
+  const filteredList = earnList.filter(item => item.FixerId === userId);
+  const Total = filteredList
+    ?.map(item => Number(item.TotalPrice))
+    .reduce((prev, curr) => prev + curr, 0);
+
   const updateStatus = item => {
+    setUserName(item.userName);
+    setUsrPhone(item.userContact);
+    setUserlocTxt(item.userLocation);
+    setUserLat(item.latitude);
+    setUserLong(item.longitude);
     setOrder(!order);
     setTimeout(() => {
       setShowGngOrd(true);
@@ -88,7 +100,9 @@ const HomeScreen = ({navigation}) => {
         Status: 'Confirmed',
         OrderDone: true,
       })
-      .then(() => console.log('Status Confirmed.'));
+      .then(() => {
+        console.log('Status Confirmed.');
+      });
   };
 
   const handleSound = sound => {
@@ -98,11 +112,27 @@ const HomeScreen = ({navigation}) => {
     }, 1000);
   };
 
+  const getEarnList = () => {
+    database()
+      .ref('/cartItems')
+      .on('value', snapshot => {
+        var li = [];
+        snapshot.forEach(child => {
+          console.log(child.val());
+          li.push({
+            key: child.key,
+            TotalPrice: child.val().TotalPrice,
+            FixerId: child.val().FixerId,
+          });
+        });
+        setEarnList(li);
+      });
+  };
+
   const getOrders = () => {
     setTimeout(() => {
       database()
         .ref('/cartItems')
-        .limitToFirst(1)
         .on('value', snapshot => {
           var li = [];
           snapshot.forEach(child => {
@@ -126,17 +156,10 @@ const HomeScreen = ({navigation}) => {
               OrderDone: child.val().OrderDone,
               userId: child.val().userId,
               userKey: child.val().userKey,
+              FixerId: child.val().FixerId,
             });
           });
           setList(li);
-          setStatus(li[0].Status);
-          setUserlocTxt(li[0].userLocation);
-          console.log('Loc---' + li[0].userLocation);
-          setUserLat(li[0].latitude);
-          setUserLong(li[0].longitude);
-          setUsrPhone(li[0].userContact);
-          setOrderKey(li[0].key);
-          setUserName(li[0].userName);
         });
     }, 2300);
   };
@@ -192,6 +215,7 @@ const HomeScreen = ({navigation}) => {
   };
 
   useEffect(() => {
+    getEarnList();
     database()
       .ref('/users')
       .on('value', snapshot => {
@@ -242,6 +266,7 @@ const HomeScreen = ({navigation}) => {
   const goOnline = () => {
     setLoader(true);
     setTimeout(() => {
+      setEaringModal(!earningModal);
       setToggle(!toggle);
       setLoader(false);
       setColor(true);
@@ -294,27 +319,26 @@ const HomeScreen = ({navigation}) => {
       }),
     ]).start();
 
-    setTimeout(() => {
-      setOrder(!order);
-      setTimeout(() => {
-        setAgainOrder(!aginOrder);
-      }, 500);
-    }, 15 * 1000);
+    // setTimeout(() => {
+    //   setOrder(!order);
+    //   setTimeout(() => {
+    //     setAgainOrder(!aginOrder);
+    //   }, 500);
+    // }, 15 * 1000);
   };
 
   const renderOrders = ({item, index}) => {
-    getTimeandDuration(item, index);
+    // getTimeandDuration(item, index);
 
-    var pdis = getPreciseDistance(
-      {latitude: item.latitude, longitude: item.longitude},
-      {latitude: lat, longitude: long},
-    );
+    // var pdis = getPreciseDistance(
+    //   {latitude: item.latitude, longitude: item.longitude},
+    //   {latitude: lat, longitude: long},
+    // );
 
-    const distancee = pdis / 1000;
-    if (duration !== '' && distancee < 20 && item.OrderDone === false) {
+    // const distancee = pdis / 1000;
+    if (item.OrderDone === false) {
       return (
         <View style={style.orderCard}>
-          {console.log('RandomList-----------------------' + item.TotalPrice)}
           {ColorAnimation()}
           {handleSound(sound)}
           <Animated.View
@@ -329,7 +353,7 @@ const HomeScreen = ({navigation}) => {
               },
             ]}
           />
-          <Text style={style.duractionTxt}>{duration} </Text>
+          {/* <Text style={style.duractionTxt}>{duration} </Text> */}
           <View style={style.orderSubCard}>
             <View style={style.orderCardText}>
               <FastImage
@@ -359,7 +383,7 @@ const HomeScreen = ({navigation}) => {
                 justifyContent: 'center',
               }}>
               <Text style={style.priceTxt}>Rs {item.TotalPrice}</Text>
-              <Text style={style.priceTxt}>{distancee.toFixed(1)} km</Text>
+              {/* <Text style={style.priceTxt}>{distancee.toFixed(1)} km</Text> */}
             </View>
           </View>
           <View style={style.acceBtnContaner}>
@@ -403,19 +427,25 @@ const HomeScreen = ({navigation}) => {
 
   const showOrders = () => {
     const shuffledList = list.sort(() => 0.5 - Math.random());
+
+    let list2 = [];
+    if (shuffledList.length === 1) {
+      list2 = shuffledList;
+    } else {
+      list2.push(shuffledList[0]);
+    }
     return (
-      <Animated.View
-        animation="slideInUp"
+      <View
         style={{
           position: 'absolute',
           bottom: 0,
         }}>
         <FlatList
-          data={shuffledList}
+          data={list2}
           renderItem={renderOrders}
           keyExtractor={item => item.key}
         />
-      </Animated.View>
+      </View>
     );
   };
 
@@ -428,8 +458,9 @@ const HomeScreen = ({navigation}) => {
   };
 
   const doHideMap = () => {
-    setOrder(order);
-    setToggle(!toggle);
+    setEaringModal(!earningModal);
+    setOrder(false);
+    setToggle(false);
     setShowGngOrd(false);
     setDataList(false);
     setHideMap(false);
@@ -440,8 +471,6 @@ const HomeScreen = ({navigation}) => {
     <View style={style.container}>
       {hideMap ? (
         <OrderDetail
-          Status={statusUser}
-          Item={orderKey}
           hideMap={hideMap}
           doHideMap={doHideMap}
           userNameTxt={userNameTxt}
@@ -459,18 +488,70 @@ const HomeScreen = ({navigation}) => {
           />
 
           {!toggle ? (
-            <Pressable
-              style={style.profileBtn}
-              activeOpacity={0.9}
-              onPress={() => {
-                navigation.navigate('Profile');
-              }}>
-              <FastImage
-                style={style.profileImg}
-                resizeMode="cover"
-                source={Images.profileImgHome}
-              />
-            </Pressable>
+            <>
+              <Pressable
+                style={style.profileBtn}
+                activeOpacity={0.9}
+                onPress={() => {
+                  navigation.navigate('Profile');
+                }}>
+                <FastImage
+                  style={style.profileImg}
+                  resizeMode="cover"
+                  source={Images.profileImgHome}
+                />
+              </Pressable>
+            </>
+          ) : null}
+          {!toggle ? (
+            <>
+              <Pressable
+                style={[style.earnBtn, {borderWidth: 0}]}
+                onPress={() => {
+                  setEaringModal(!earningModal);
+                }}>
+                <FastImage
+                  style={style.earnImg}
+                  resizeMode="cover"
+                  source={Images.money}
+                />
+              </Pressable>
+            </>
+          ) : null}
+
+          {!toggle && earningModal ? (
+            <Animatable.View
+              duration={600}
+              useNativeDriver={true}
+              animation={'zoomIn'}
+              style={style.earningView}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: 'green',
+                  fontWeight: '700',
+                  alignItems: 'center',
+                }}>
+                Rs.{' '}
+                <Text
+                  style={{
+                    fontSize: 19,
+                    color: 'white',
+                    fontWeight: '700',
+                  }}>
+                  {Total.toFixed(1)}
+                </Text>
+              </Text>
+
+              <Text
+                style={{
+                  fontSize: 19,
+                  color: 'grey',
+                  fontWeight: '700',
+                }}>
+                Total Earnings
+              </Text>
+            </Animatable.View>
           ) : null}
 
           {!toggle ? (
@@ -535,13 +616,9 @@ const HomeScreen = ({navigation}) => {
               <Pressable
                 style={style.backArrow}
                 onPress={() => {
-                  // doHideMap();
+                  doHideMap();
                 }}>
-                <Ionicons
-                  name={'arrow-back-outline'}
-                  size={28}
-                  color={'black'}
-                />
+                <Ionicons name={'close'} size={28} color={'black'} />
               </Pressable>
             </View>
           ) : null}
