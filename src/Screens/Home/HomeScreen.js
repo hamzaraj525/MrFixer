@@ -12,7 +12,6 @@ import {
   Dimensions,
 } from 'react-native';
 import style from './style';
-import moment from 'moment';
 import Sound from 'react-native-sound';
 import * as Animatable from 'react-native-animatable';
 import {useDispatch, useSelector} from 'react-redux';
@@ -40,17 +39,20 @@ import LottieView from 'lottie-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 const sound = new Sound('simplenotification.mp3');
 const {width, height} = Dimensions.get('window');
+const TIMEDURATION = 2000;
 
 const HomeScreen = ({navigation}) => {
+  const GOOGLE_MAPS_APIKEY = 'AIzaSyDAhaR1U_-EQJZu4Ckm0iUQ4gxSWqIMOvY';
   const [lat, setLat] = useState();
+  const [long, setLong] = useState();
   const [order, setOrder] = useState(false);
   const [go, setGo] = useState(false);
   const [orderKey, setOrderKey] = useState();
+  const [distanceData, setDisData] = useState('');
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState('');
   const [statusUser, setStatus] = useState('');
   const [userPhone, setUsrPhone] = useState();
-  const [long, setLong] = useState();
   const [list, setList] = useState([]);
   const [earnList, setEarnList] = useState([]);
   const [doL, setDo] = useState([]);
@@ -73,12 +75,58 @@ const HomeScreen = ({navigation}) => {
   const verticalVal = useRef(new Animated.Value(0)).current;
   const timeDuration = useState(10);
   const slideAnimation = React.useRef(new Animated.Value(width)).current;
-  const {userId} = useSelector(reducers => reducers.cartReducer);
-
+  const {userId, userPic} = useSelector(reducers => reducers.cartReducer);
   const filteredList = earnList.filter(item => item.FixerId === userId);
+  const placeHolerImg =
+    'https://firebasestorage.googleapis.com/v0/b/mrfix-55775.appspot.com/o/MrFixProfilePics%2Fman-2.png?alt=media&token=68735a41-7ffe-4082-bc00-2b88c8f9e22a';
+
   const Total = filteredList
     ?.map(item => Number(item.TotalPrice))
     .reduce((prev, curr) => prev + curr, 0);
+
+  const date = new Date();
+  const datee = date.getDate();
+  ///distance
+
+  // const getDistance = item => {
+  //   const pdis = getPreciseDistance(
+  //     {latitude: item.latitude, longitude: item.longitude},
+  //     {latitude: lat, longitude: long},
+  //   );
+  //   const distancee = pdis / 1000;
+  //   setDisData(distancee);
+  // };
+
+  // const conditionList = list?.filter(
+  //   item =>
+  //     item.OrderDone === false && item.TodayDate === datee && duration < 40,
+  // );
+
+  const getTimeandDuration = item => {
+    console.log(item, 'item in get time and distance');
+    if (item !== undefined) {
+      console.log(item, 'in if');
+      fetch(
+        'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' +
+          lat +
+          ',' +
+          long +
+          '&destinations=' +
+          item.latitude +
+          ',' +
+          item.longitude +
+          '&key=' +
+          GOOGLE_MAPS_APIKEY,
+      )
+        .then(response => response.json())
+        .then(json => {
+          setDistance(json.rows[0].elements[0].distance.text);
+          setDuration(json.rows[0].elements[0].duration.text);
+        });
+    } else {
+      console.log('else--------------');
+    }
+  };
 
   const updateStatus = item => {
     setUserName(item.userName);
@@ -100,9 +148,7 @@ const HomeScreen = ({navigation}) => {
         Status: 'Confirmed',
         OrderDone: true,
       })
-      .then(() => {
-        console.log('Status Confirmed.');
-      });
+      .then(() => {});
   };
 
   const handleSound = sound => {
@@ -118,7 +164,6 @@ const HomeScreen = ({navigation}) => {
       .on('value', snapshot => {
         var li = [];
         snapshot.forEach(child => {
-          console.log(child.val());
           li.push({
             key: child.key,
             TotalPrice: child.val().TotalPrice,
@@ -136,7 +181,6 @@ const HomeScreen = ({navigation}) => {
         .on('value', snapshot => {
           var li = [];
           snapshot.forEach(child => {
-            console.log(child.val());
             li.push({
               key: child.key,
               TotalPrice: child.val().TotalPrice,
@@ -157,8 +201,17 @@ const HomeScreen = ({navigation}) => {
               userId: child.val().userId,
               userKey: child.val().userKey,
               FixerId: child.val().FixerId,
+              TodayDate: child.val().TodayDate,
+              userProfilePic: child.val().userProfilePic,
+              OrderType: child.val().OrderType,
             });
           });
+          li = li.filter(o => {
+            return o.OrderDone === false && o.TodayDate === datee;
+          });
+          if (list.length >= 2) {
+            li = li.sort(() => 0.5 - Math.random());
+          }
           setList(li);
         });
     }, 2300);
@@ -176,13 +229,9 @@ const HomeScreen = ({navigation}) => {
 
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         _getCurrentLocation();
-        console.log('Location permission granted');
       } else {
-        console.log('Location permission denied');
       }
-    } catch (err) {
-      console.warn(err);
-    }
+    } catch (err) {}
   };
 
   const _getCurrentLocation = () => {
@@ -192,11 +241,8 @@ const HomeScreen = ({navigation}) => {
         setLong(position.coords.longitude);
         dispatch(addLatitude(position.coords.latitude));
         dispatch(addLontitude(position.coords.longitude));
-        console.log('location:' + lat, long);
       },
-      error => {
-        console.log(error);
-      },
+      error => {},
       {
         enableHighAccuracy: false,
         timeout: 2000,
@@ -208,10 +254,10 @@ const HomeScreen = ({navigation}) => {
     Geocoder.from(lat, long)
       .then(json => {
         var addressComponent = json.results[3].formatted_address;
-        console.log('address is  here', addressComponent);
+
         setLocationText(addressComponent);
       })
-      .catch(error => console.log(error));
+      .catch(error => {});
   };
 
   useEffect(() => {
@@ -232,7 +278,6 @@ const HomeScreen = ({navigation}) => {
     if (toggle) {
       getOrders();
     } else {
-      console.log('not toggle');
     }
 
     if (Platform.OS === 'android') {
@@ -245,6 +290,7 @@ const HomeScreen = ({navigation}) => {
       toValue: 10,
       duration: 1000,
       easing: Easing.inOut(Easing.quad),
+      useNativeDriver: true,
     }).start();
     verticalVal.addListener(({value}) => {
       if (value == 10) {
@@ -252,12 +298,14 @@ const HomeScreen = ({navigation}) => {
           toValue: 0,
           duration: 1000,
           easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
         }).start();
       } else if (value == 0) {
         Animated.timing(verticalVal, {
           toValue: 10,
           duration: 1000,
           easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
         }).start();
       }
     });
@@ -278,31 +326,32 @@ const HomeScreen = ({navigation}) => {
           setDataList(false);
           setRadarLoader(false);
         }, 4000);
-
         setColor(false);
       }, 1000);
     }, 2000);
   };
 
-  const getTimeandDuration = item => {
-    fetch(
-      'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' +
-        lat +
-        ',' +
-        long +
-        '&destinations=' +
-        item.latitude +
-        ',' +
-        item.longitude +
-        '&key=' +
-        GOOGLE_MAPS_APIKEY,
-    )
-      .then(response => response.json())
-      .then(json => {
-        console.log('json---', json);
-        setDistance(json.rows[0].elements[0].distance.text);
-        setDuration(json.rows[0].elements[0].duration.text);
-      });
+  const a = () => {
+    setAgainOrder(false);
+    setOrder(true);
+  };
+  const b = () => {
+    setAgainOrder(true);
+    setOrder(false);
+  };
+
+  const toggleFunction = () => {
+    if (order === false) {
+      a();
+    }
+    if (order === true) {
+      b();
+    }
+    // if (aginOrder === false) {
+    //   b();
+    // }
+    // if (aginOrder === true) {
+    //   a();
   };
 
   const ColorAnimation = () => {
@@ -314,139 +363,91 @@ const HomeScreen = ({navigation}) => {
       }),
       Animated.timing(slideAnimation, {
         toValue: width,
-        duration: 15 * 1000,
+        duration: TIMEDURATION,
         useNativeDriver: true,
       }),
-    ]).start();
-
-    // setTimeout(() => {
-    //   setOrder(!order);
-    //   setTimeout(() => {
-    //     setAgainOrder(!aginOrder);
-    //   }, 500);
-    // }, 15 * 1000);
-  };
-
-  const renderOrders = ({item, index}) => {
-    // getTimeandDuration(item, index);
-
-    // var pdis = getPreciseDistance(
-    //   {latitude: item.latitude, longitude: item.longitude},
-    //   {latitude: lat, longitude: long},
-    // );
-
-    // const distancee = pdis / 1000;
-    if (item.OrderDone === false) {
-      return (
-        <View style={style.orderCard}>
-          {ColorAnimation()}
-          {handleSound(sound)}
-          <Animated.View
-            style={[
-              StyleSheet.absoluteFillObject,
-              {
-                borderRadius: 7,
-                backgroundColor: 'red',
-                height: 3,
-                width: width,
-                transform: [{translateX: slideAnimation}],
-              },
-            ]}
-          />
-          {/* <Text style={style.duractionTxt}>{duration} </Text> */}
-          <View style={style.orderSubCard}>
-            <View style={style.orderCardText}>
-              <FastImage
-                resizeMode={FastImage.resizeMode.contain}
-                source={require('./../../../assets/Images/profile.png')}
-                style={{
-                  width: 45,
-                  height: 45,
-                }}
-                priority={FastImage.priority.normal}
-              />
-              <View style={{left: 10}}>
-                {item.Order.map((item, index) => {
-                  return (
-                    <Text key={index} style={style.txtItems}>
-                      {item.type}
-                    </Text>
-                  );
-                })}
-                <Text style={style.kmTxt}>{item.userName}</Text>
-              </View>
-            </View>
-
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text style={style.priceTxt}>Rs {item.TotalPrice}</Text>
-              {/* <Text style={style.priceTxt}>{distancee.toFixed(1)} km</Text> */}
-            </View>
-          </View>
-          <View style={style.acceBtnContaner}>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={style.acceptBtn}
-              onPress={() => {
-                updateStatus(item);
-              }}>
-              <Text style={{fontSize: 15, color: 'white', fontWeight: '500'}}>
-                Accept
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      );
-    } else if (item.OrderDone === true) {
-      return (
-        <>
-          <View
-            style={{
-              backgroundColor: '#fff',
-              padding: '4%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: width,
-            }}>
-            <Text
-              style={{
-                fontSize: 18,
-                color: 'black',
-                fontWeight: '500',
-              }}>
-              Currently No Orders Found
-            </Text>
-          </View>
-        </>
-      );
-    }
+    ]).start(() => {
+      setTimeout(() => {
+        toggleFunction();
+      }, TIMEDURATION);
+    });
   };
 
   const showOrders = () => {
-    const shuffledList = list.sort(() => 0.5 - Math.random());
+    return list.map(item => {
+      getTimeandDuration(item);
+      // getDistance(item);
+      return (
+        <View
+          key={item.key}
+          style={{
+            position: 'absolute',
+            bottom: 0,
+          }}>
+          <View style={style.orderCard}>
+            {/* {ColorAnimation()} */}
+            {handleSound(sound)}
 
-    let list2 = [];
-    if (shuffledList.length === 1) {
-      list2 = shuffledList;
-    } else {
-      list2.push(shuffledList[0]);
-    }
-    return (
-      <View
-        style={{
-          position: 'absolute',
-          bottom: 0,
-        }}>
-        <FlatList
-          data={list2}
-          renderItem={renderOrders}
-          keyExtractor={item => item.key}
-        />
-      </View>
-    );
+            <Animated.View
+              style={[
+                StyleSheet.absoluteFillObject,
+                {
+                  borderRadius: 7,
+                  backgroundColor: 'red',
+                  height: 3,
+                  width: width,
+                  transform: [{translateX: slideAnimation}],
+                },
+              ]}
+            />
+            <Text style={style.duractionTxt}>{duration} </Text>
+            <View style={style.orderSubCard}>
+              <View style={style.orderCardText}>
+                <FastImage
+                  resizeMode={FastImage.resizeMode.contain}
+                  source={{
+                    uri: item.userProfilePic
+                      ? item.userProfilePic
+                      : placeHolerImg,
+                  }}
+                  style={{
+                    width: 45,
+                    height: 45,
+                    borderRadius: 45 / 2,
+                  }}
+                  priority={FastImage.priority.normal}
+                />
+                <View style={{left: 10}}>
+                  <Text style={style.txtItems}>{item.OrderType}</Text>
+                  <Text style={style.kmTxt}>{item.userName}</Text>
+                </View>
+              </View>
+
+              <View
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text style={style.priceTxt}>Rs {item.TotalPrice}</Text>
+                <Text style={style.priceTxt}>{distance}</Text>
+              </View>
+            </View>
+            <View style={style.acceBtnContaner}>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                style={style.acceptBtn}
+                onPress={() => {
+                  updateStatus(item);
+                }}>
+                <Text style={{fontSize: 15, color: 'white', fontWeight: '500'}}>
+                  Accept
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      );
+    });
   };
 
   const hideMapScreen = () => {
@@ -498,7 +499,7 @@ const HomeScreen = ({navigation}) => {
                 <FastImage
                   style={style.profileImg}
                   resizeMode="cover"
-                  source={Images.profileImgHome}
+                  source={{uri: userPic ? userPic : placeHolerImg}}
                 />
               </Pressable>
             </>
@@ -662,7 +663,7 @@ const HomeScreen = ({navigation}) => {
               setOrder(!order);
             }, 2000);
             setRadarLoader(true);
-            setAgainOrder(!aginOrder);
+            setAgainOrder(false);
           }}>
           <Text style={{fontSize: 15, color: 'white', fontWeight: '500'}}>
             Request Again

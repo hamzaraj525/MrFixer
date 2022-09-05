@@ -93,6 +93,7 @@ function Verify({navigation, props, route}) {
             });
           })
           .catch(error => {
+            setLoader(false);
             alert('Something went wrong' + error);
           });
         // }
@@ -106,9 +107,11 @@ function Verify({navigation, props, route}) {
         const results = await confirmation.confirm(verifyCode);
         uploadUserToDataBase(results);
       } else {
+        setLoader(false);
         alert('Please enter valid OTP code.');
       }
     } catch (error) {
+      setLoader(false);
       alert('Invalid code.' + error);
     }
   };

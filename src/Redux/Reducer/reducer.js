@@ -106,6 +106,11 @@ export const cartReducer = (state = initialState, action) => {
         ...state,
         orderKey: action.orderKey,
       };
+    case 'USER_PIC':
+      return {
+        ...state,
+        userPic: action.userPic,
+      };
   }
   return state;
 };

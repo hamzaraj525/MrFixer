@@ -158,6 +158,7 @@ const OrderDetail = props => {
         hideMap={props.hideMap}
         doHideMap={props.doHideMap}
         order={props.order}
+        userNameTxt={props.userNameTxt}
       />
     </View>
   );

@@ -19,7 +19,7 @@ const {width, height} = Dimensions.get('window');
 function AccReady({navigation}) {
   const [showModal, setShowModal] = useState(false);
 
-  // const {userName} = useSelector(reducers => reducers.cartReducer);
+  const {userName} = useSelector(reducers => reducers.cartReducer);
 
   return (
     <SafeAreaView style={[styles.container, {}]}>
@@ -37,7 +37,7 @@ function AccReady({navigation}) {
       </View>
       <View style={{flex: 1, alignItems: 'center'}}>
         {/* <Text> {userName},your account is almost ready </Text> */}
-        <Text style={styles.txt}>Hamza </Text>
+        <Text style={styles.txt}>{userName} </Text>
         <Text style={styles.txt}>your account is ready now </Text>
         <Text style={styles.txtSub}>Earn by taking orders at few clicks</Text>
         <TouchableOpacity

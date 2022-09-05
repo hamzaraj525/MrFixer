@@ -115,7 +115,7 @@ const RateModal = props => {
                 style={[styles.clientName, {fontSize: 15, fontWeight: '700'}]}>
                 How was your Client?
               </Text>
-              <Text style={styles.clientName}>{userName}</Text>
+              <Text style={styles.clientName}>{props.userNameTxt}</Text>
 
               <Rating
                 rating={starCount}

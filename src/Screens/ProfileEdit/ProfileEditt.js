@@ -18,7 +18,6 @@ import database from '@react-native-firebase/database';
 import Constraints from '../../Constraints/Constraints';
 import ImagePicker from 'react-native-image-crop-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import NameEditModal from './../../Components/Modal/NameEditModal';
 import MailEditModal from './../../Components/Modal/MailEditModal';
@@ -26,7 +25,8 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Share from 'react-native-share';
 import auth from '@react-native-firebase/auth';
 import files from './../../../assets/Images/fileBase64';
-import {logoutUser} from './../../Redux/Action/actions';
+import {logoutUser, userProfilePic} from './../../Redux/Action/actions';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 function ProfileEditt({navigation, props, route}) {
   const dispatch = useDispatch();
@@ -40,14 +40,29 @@ function ProfileEditt({navigation, props, route}) {
   const [transferred, setTransferred] = useState(0);
   const [showNameModal, setNameModal] = React.useState(false);
   const [showMailModal, setMailModal] = React.useState(false);
-  const {userId, userContact} = useSelector(reducers => reducers.cartReducer);
+  const {userId, userContact, userPic} = useSelector(
+    reducers => reducers.cartReducer,
+  );
+  const filteredList = listt.filter(e => e.userIdd === userId);
+  const placeHolerImg =
+    'https://firebasestorage.googleapis.com/v0/b/mrfix-55775.appspot.com/o/MrFixProfilePics%2Fman-2.png?alt=media&token=68735a41-7ffe-4082-bc00-2b88c8f9e22a';
 
-  const uploadImage = async () => {
-    if (image === null) {
-      alert('Please select an image');
-      return null;
-    }
-    const uploadUri = image;
+  const updateProfilePic = (uploadUri, e) => {
+    database()
+      .ref('riders/' + e.key)
+      .update({
+        FixerPic3: uploadUri,
+      })
+      .then(() => {
+        dispatch(userProfilePic(uploadUri));
+        console.log('name updated.');
+      })
+      .catch(() => {
+        alert('Some error occured');
+      });
+  };
+
+  const uploadImage = async (uploadUri, e) => {
     let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
 
     // Add timestamp to File Name
@@ -74,7 +89,8 @@ function ProfileEditt({navigation, props, route}) {
       setUploading(false);
       console.log('url==' + url);
       setImage(url);
-      Alert.alert('Image uploaded!');
+      updateProfilePic(uploadUri, e);
+      console.log('Image uploaded!');
       return url;
       console.log('url here' + url);
     } catch (e) {
@@ -83,7 +99,7 @@ function ProfileEditt({navigation, props, route}) {
     }
   };
 
-  const choosePhotoFromLibrary = async () => {
+  const choosePhotoFromLibrary = async e => {
     ImagePicker.openPicker({
       width: 300,
       height: 300,
@@ -92,12 +108,7 @@ function ProfileEditt({navigation, props, route}) {
     })
       .then(img => {
         const imageUri = Platform.OS === 'ios' ? img.sourceURL : img.path;
-        setImage(imageUri);
-      })
-      .then(() => {
-        setTimeout(() => {
-          uploadImage();
-        }, 600);
+        uploadImage(imageUri, e);
       })
       .catch(error => {
         console.log(error);
@@ -124,6 +135,7 @@ function ProfileEditt({navigation, props, route}) {
             userNamee: child.val().userName,
             userMaill: child.val().userMail,
             userPhone: child.val().userPhone,
+            FixerPic3: child.val().FixerPic3,
           });
         });
         setList(li);
@@ -221,20 +233,6 @@ function ProfileEditt({navigation, props, route}) {
       },
     ]);
 
-  const shareApp = async () => {
-    const options = {
-      message: 'Mr.Fix App',
-      url: files.appLogo,
-    };
-    try {
-      const shareRes = await Share.open(options).then(res => {
-        console.log(res);
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   return (
     <SafeAreaView style={style.container}>
       {uploading ? (
@@ -269,27 +267,24 @@ function ProfileEditt({navigation, props, route}) {
               <Text style={style.containTxt}>Orders</Text>
             </Pressable>
 
-            <Pressable
-              style={style.imgSubContainer}
-              onPress={() => {
-                choosePhotoFromLibrary();
-              }}>
-              {image ? (
-                <FastImage
-                  resizeMode={FastImage.resizeMode.cover}
-                  priority={FastImage.priority.high}
-                  style={style.editImgStyle}
-                  source={{uri: image}}
-                />
-              ) : (
-                <FastImage
-                  resizeMode="cover"
-                  priority={FastImage.priority.normal}
-                  style={style.editImgStyle}
-                  source={Images.profileImgHome}
-                />
-              )}
-            </Pressable>
+            {filteredList.map(e => {
+              return (
+                <Pressable
+                  style={style.imgSubContainer}
+                  onPress={() => {
+                    choosePhotoFromLibrary(e);
+                  }}>
+                  <FastImage
+                    resizeMode={FastImage.resizeMode.cover}
+                    priority={FastImage.priority.high}
+                    style={style.editImgStyle}
+                    source={{
+                      uri: e.FixerPic3 ? e.FixerPic3 : placeHolerImg,
+                    }}
+                  />
+                </Pressable>
+              );
+            })}
 
             <Pressable
               style={style.logoutBtn}

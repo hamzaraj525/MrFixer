@@ -45,7 +45,7 @@ const Maps = props => {
               longitude: props.userLong ? props.userLong : 0,
             }}
             apikey={GOOGLE_MAPS_APIKEY}
-            strokeWidth={6}
+            strokeWidth={5}
             strokeColor="red"
           />
         ) : null}
