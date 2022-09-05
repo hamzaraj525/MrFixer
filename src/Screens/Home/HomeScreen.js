@@ -42,7 +42,6 @@ const {width, height} = Dimensions.get('window');
 const TIMEDURATION = 2000;
 
 const HomeScreen = ({navigation}) => {
-  const GOOGLE_MAPS_APIKEY = 'AIzaSyDAhaR1U_-EQJZu4Ckm0iUQ4gxSWqIMOvY';
   const [lat, setLat] = useState();
   const [long, setLong] = useState();
   const [order, setOrder] = useState(false);
