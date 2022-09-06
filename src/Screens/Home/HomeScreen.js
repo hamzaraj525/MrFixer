@@ -42,7 +42,6 @@ const {width, height} = Dimensions.get('window');
 const TIMEDURATION = 15000;
 
 const HomeScreen = ({navigation}) => {
-  const GOOGLE_MAPS_APIKEY = 'AIzaSyDAhaR1U_-EQJZu4Ckm0iUQ4gxSWqIMOvY';
   const [lat, setLat] = useState();
   const [long, setLong] = useState();
   const [order, setOrder] = useState(false);
@@ -353,9 +352,7 @@ const HomeScreen = ({navigation}) => {
       setTimeout(() => {
         if (boolForCard) {
           // setAgainOrder(true);
-          // setOrder(false);
-          changeView();
-          toggleBoolForCard();
+          setOrder(!order);
         }
       }, TIMEDURATION);
     });
@@ -639,7 +636,7 @@ const HomeScreen = ({navigation}) => {
         </View>
       ) : null}
       {/* order again small button */}
-      {aginOrder ? (
+      {/* {aginOrder ? (
         <TouchableOpacity
           activeOpacity={0.9}
           style={[
@@ -664,7 +661,7 @@ const HomeScreen = ({navigation}) => {
             Request Again
           </Text>
         </TouchableOpacity>
-      ) : null}
+      ) : null} */}
     </View>
   );
 };
