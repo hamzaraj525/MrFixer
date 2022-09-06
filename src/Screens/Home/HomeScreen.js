@@ -39,9 +39,10 @@ import LottieView from 'lottie-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 const sound = new Sound('simplenotification.mp3');
 const {width, height} = Dimensions.get('window');
-const TIMEDURATION = 2000;
+const TIMEDURATION = 15000;
 
 const HomeScreen = ({navigation}) => {
+  const GOOGLE_MAPS_APIKEY = 'AIzaSyDAhaR1U_-EQJZu4Ckm0iUQ4gxSWqIMOvY';
   const [lat, setLat] = useState();
   const [long, setLong] = useState();
   const [order, setOrder] = useState(false);
@@ -70,6 +71,7 @@ const HomeScreen = ({navigation}) => {
   const [userLat, setUserLat] = useState();
   const [userLong, setUserLong] = useState();
   const [aginOrder, setAgainOrder] = useState(false);
+  const [boolForCard, setBoolForCard] = useState(true);
   const dispatch = useDispatch();
   const verticalVal = useRef(new Animated.Value(0)).current;
   const timeDuration = useState(10);
@@ -321,7 +323,7 @@ const HomeScreen = ({navigation}) => {
       setTimeout(() => {
         setRadarLoader(true);
         setTimeout(() => {
-          setOrder(!order);
+          setOrder(true);
           setDataList(false);
           setRadarLoader(false);
         }, 4000);
@@ -330,27 +332,9 @@ const HomeScreen = ({navigation}) => {
     }, 2000);
   };
 
-  const a = () => {
-    setAgainOrder(false);
-    setOrder(true);
-  };
-  const b = () => {
-    setAgainOrder(true);
-    setOrder(false);
-  };
-
-  const toggleFunction = () => {
-    if (order === false) {
-      a();
-    }
-    if (order === true) {
-      b();
-    }
-    // if (aginOrder === false) {
-    //   b();
-    // }
-    // if (aginOrder === true) {
-    //   a();
+  // setAgainOrder if ture  ===== cardwith timer
+  const toggleBoolForCard = () => {
+    setBoolForCard(false);
   };
 
   const ColorAnimation = () => {
@@ -367,11 +351,17 @@ const HomeScreen = ({navigation}) => {
       }),
     ]).start(() => {
       setTimeout(() => {
-        toggleFunction();
+        if (boolForCard) {
+          // setAgainOrder(true);
+          // setOrder(false);
+          changeView();
+          toggleBoolForCard();
+        }
       }, TIMEDURATION);
     });
   };
 
+  // timerCard
   const showOrders = () => {
     return list.map(item => {
       getTimeandDuration(item);
@@ -384,7 +374,7 @@ const HomeScreen = ({navigation}) => {
             bottom: 0,
           }}>
           <View style={style.orderCard}>
-            {/* {ColorAnimation()} */}
+            {ColorAnimation()}
             {handleSound(sound)}
 
             <Animated.View
@@ -465,6 +455,11 @@ const HomeScreen = ({navigation}) => {
     setDataList(false);
     setHideMap(false);
     setColor(false);
+  };
+
+  const changeView = () => {
+    setOrder(!order);
+    setAgainOrder(!aginOrder);
   };
 
   return (
@@ -643,7 +638,7 @@ const HomeScreen = ({navigation}) => {
           />
         </View>
       ) : null}
-
+      {/* order again small button */}
       {aginOrder ? (
         <TouchableOpacity
           activeOpacity={0.9}
@@ -657,12 +652,13 @@ const HomeScreen = ({navigation}) => {
             },
           ]}
           onPress={() => {
+            changeView();
             setTimeout(() => {
               setRadarLoader(false);
-              setOrder(!order);
+              // setOrder(!order);
             }, 2000);
             setRadarLoader(true);
-            setAgainOrder(false);
+            // setAgainOrder(false);
           }}>
           <Text style={{fontSize: 15, color: 'white', fontWeight: '500'}}>
             Request Again
