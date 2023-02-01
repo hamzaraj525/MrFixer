@@ -21,6 +21,7 @@ import Geocoder from 'react-native-geocoding';
 import {
   confirmOrder,
   addTimeOfOrder,
+  mrFixAppUser,
   addOrderUid,
   addOrderKey,
   addLatitude,
@@ -42,6 +43,7 @@ const {width, height} = Dimensions.get('window');
 const TIMEDURATION = 15000;
 
 const HomeScreen = ({navigation}) => {
+  const GOOGLE_MAPS_APIKEY = 'AIzaSyDAhaR1U_-EQJZu4Ckm0iUQ4gxSWqIMOvY';
   const [lat, setLat] = useState();
   const [long, setLong] = useState();
   const [order, setOrder] = useState(false);
@@ -141,6 +143,7 @@ const HomeScreen = ({navigation}) => {
     dispatch(confirmOrder('Confirmed'));
     dispatch(addOrderUid(item.userKey));
     dispatch(addOrderKey(item.key));
+    dispatch(mrFixAppUser(item.userId));
 
     database()
       .ref('cartItems/' + item.key)
@@ -352,7 +355,7 @@ const HomeScreen = ({navigation}) => {
       setTimeout(() => {
         if (boolForCard) {
           // setAgainOrder(true);
-          setOrder(!order);
+          // setOrder(!order);
         }
       }, TIMEDURATION);
     });

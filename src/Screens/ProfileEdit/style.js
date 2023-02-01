@@ -34,9 +34,8 @@ export default StyleSheet.create({
     height: 52,
   },
   userNmeStyle: {
-    fontFamily: 'RobotoSlab-Bold',
     alignSelf: 'center',
-    fontWeight: '600',
+    fontWeight: '700',
     color: 'black',
     fontSize: 24,
     marginBottom: '8%',
@@ -50,7 +49,6 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   uploadTxt: {
-    fontFamily: 'RobotoSlab-Bold',
     fontSize: 16,
     color: '#0000ff',
     marginTop: 10,

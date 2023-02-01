@@ -127,3 +127,10 @@ export const userProfilePic = userPic => {
     userPic: userPic,
   };
 };
+export const mrFixAppUser = mrFixUserId => {
+  // console.log('user Pic----' + mrFixUserId);
+  return {
+    type: 'MR_FIX_USER_ID',
+    mrFixUserId: mrFixUserId,
+  };
+};

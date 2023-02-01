@@ -8,12 +8,100 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:396546444157:android:a57a1f05741e4e99d29a14",
+        "android_client_info": {
+          "package_name": "com.adminmrfix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "396546444157-oppuahama70q0p41dqsmdc1o3187lj4p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPYaZDUKmwr9DkrMl48LVn9HtSrNTNf-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "396546444157-oppuahama70q0p41dqsmdc1o3187lj4p.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "396546444157-99if5ed8q6ho828lvdsrs2dic3qblnia.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.mrfixapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:396546444157:android:4b90e7b03b039fc9d29a14",
         "android_client_info": {
           "package_name": "com.fixerapp"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "396546444157-50mvf8fl1njibc3p9rc4ico7jkma2veh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fixerapp",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "396546444157-oppuahama70q0p41dqsmdc1o3187lj4p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPYaZDUKmwr9DkrMl48LVn9HtSrNTNf-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "396546444157-oppuahama70q0p41dqsmdc1o3187lj4p.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "396546444157-99if5ed8q6ho828lvdsrs2dic3qblnia.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.mrfixapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396546444157:android:d1887fc230b47a19d29a14",
+        "android_client_info": {
+          "package_name": "com.mrfixapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "396546444157-hgbp5nnprr3elag0997mj3pqas5q2qvn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mrfixapp",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
         {
           "client_id": "396546444157-oppuahama70q0p41dqsmdc1o3187lj4p.apps.googleusercontent.com",
           "client_type": 3

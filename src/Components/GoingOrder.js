@@ -10,14 +10,25 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import moment from 'moment';
+import database from '@react-native-firebase/database';
+import {useNavigation} from '@react-navigation/native';
 import * as Animatable from 'react-native-animatable';
 import {useDispatch, useSelector} from 'react-redux';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {addTimeOfOrder} from '../Redux/Action/actions';
+
 const GoingOrder = props => {
+  const navigation = useNavigation();
   const dispatch = useDispatch();
   const time = moment().format('hh:mm a');
+  const {mrFixUserId} = useSelector(reducers => reducers.cartReducer);
+
+  const deleteChat = () => {
+    database()
+      .ref('Chats/' + mrFixUserId)
+      .remove();
+  };
   return (
     <>
       <View
@@ -27,16 +38,15 @@ const GoingOrder = props => {
           right: 20,
         }}>
         <TouchableOpacity
-          style={{
-            elevation: 2,
-            padding: 9,
-            borderRadius: 30,
-            backgroundColor: '#3372e2',
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-            alignItems: 'center',
-            width: 145,
-          }}
+          style={styles.msgBtn}
+          activeOpacity={0.8}
+          onPress={() => {
+            navigation.navigate('Chat');
+          }}>
+          <MaterialCommunityIcons name="chat" size={30} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navBtn}
           activeOpacity={0.8}
           onPress={() => {
             Linking.openURL(
@@ -51,7 +61,7 @@ const GoingOrder = props => {
           <Text
             style={{
               color: 'white',
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: '400',
             }}>
             NAVIGATE
@@ -118,6 +128,7 @@ const GoingOrder = props => {
               activeOpacity={0.8}
               onPress={() => {
                 dispatch(addTimeOfOrder(time));
+                deleteChat();
                 props.hideMapScreen();
               }}>
               {props.loader === false ? (
@@ -154,5 +165,27 @@ const styles = StyleSheet.create({
     paddingVertical: '2.7%',
     paddingHorizontal: '5%',
     backgroundColor: '#3372e2',
+  },
+  msgBtn: {
+    elevation: 2,
+    borderRadius: 58 / 2,
+    backgroundColor: 'orange',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    width: 58,
+    height: 58,
+    marginBottom: 21,
+  },
+  navBtn: {
+    elevation: 2,
+    padding: 9,
+    borderRadius: 30,
+    backgroundColor: '#3372e2',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: 145,
   },
 });

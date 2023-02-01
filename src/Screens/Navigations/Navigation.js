@@ -8,6 +8,7 @@ import Otp from '../Authentication/Otp/Otp';
 import SignUpOtpp from '../SignUpOtp/SignUpOtpp';
 import Verify from '../Authentication/Otp/Verify';
 import HomeScreen from '../Home/HomeScreen';
+import Chat from '../Chat/Chat';
 import OrderDetail from '../OrderDetail/OrderDetail';
 import ProfileEditt from '../ProfileEdit/ProfileEditt';
 import DocRegDetails from './../DocRegDetails/DocRegDetails';
@@ -77,6 +78,11 @@ function Navigation({}) {
         options={{header: () => null}}
         name="Home"
         component={HomeScreen}
+      />
+      <Stack.Screen
+        options={{header: () => null}}
+        name="Chat"
+        component={Chat}
       />
       <Stack.Screen
         options={{header: () => null}}

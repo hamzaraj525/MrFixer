@@ -111,6 +111,11 @@ export const cartReducer = (state = initialState, action) => {
         ...state,
         userPic: action.userPic,
       };
+    case 'MR_FIX_USER_ID':
+      return {
+        ...state,
+        mrFixUserId: action.mrFixUserId,
+      };
   }
   return state;
 };

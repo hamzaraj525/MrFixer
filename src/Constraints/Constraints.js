@@ -45,4 +45,5 @@ export default Constraints = {
   ADD_TO_CART: 'Add to Cart',
   DONE: 'Done',
   RATE_RIDER: 'Rate now',
+  CHAT: 'Chat',
 };

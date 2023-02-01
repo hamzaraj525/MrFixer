@@ -60,10 +60,8 @@ const RateModal = props => {
   const rate = () => {
     setLoader(true);
     database()
-      .ref('users/' + orderUid)
-      .push({
-        Ratings: [...Ratinglist, starCount],
-      })
+      .ref('users/' + orderUid + '/Ratings')
+      .push(starCount)
       .then(() => {
         setLoader(false);
         setLoLotte(true);
@@ -71,6 +69,9 @@ const RateModal = props => {
           props.hideRateModal();
           props.doHideMap();
         }, 2500);
+      })
+      .catch(() => {
+        setLoader(false);
       });
   };
 
